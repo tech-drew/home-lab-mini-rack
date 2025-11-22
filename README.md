@@ -6,20 +6,25 @@ This project documents the creation of a compact home lab setup, designed for **
 
 ## Hardware Components
 
-### 1. Rack
+### Rack
 - **Model:** DeskPi Rack T1 (8U)  
 - **Price:** $150  
 - **Link:** [Amazon](https://www.amazon.com/GeeekPi-Cabinet-Equipment-RackMate-Rackmount/dp/B0CSCWVTQ7/ref=sr_1_2?crid=GDHRRH2UXRHZ&dib=eyJ2IjoiMSJ9.ctEHtcyHjljLot4TDmYNl004xVLEQxLpZ6ugneAQoWVkhRg059_UPw-724bbB1bXFfm6LohuAbtqAsw3Y_ZEye7Qc4MZkfSZiiaLHag1DHMgBd1no0EKbJ0-mZXOYH0hgPWFCIV2uGIPh01S6aZSlOyJRZ_7x74oMpAZ0z-fGocnI-kJR2dEKfzSLEl4ZJqIBLE0dZ3dHUGQY5rIRj6Tt9sq7-mFjNTY1nl513uWYpI.pNpAxwKHSyFE8YLJR-L5Uv-rvytRnUTUx0zTvjoTYb8&dib_tag=se&keywords=GeeekPi%2B8U%2BServer%2BCabinet&qid=1763829355&sprefix=geeekpi%2B8u%2Bserver%2Bcabinet%2Caps%2C230&sr=8-2&th=1)
 
-### 2. Modem
+### 1. Modem
 - **Model:** Arris Surfboard S33 (already owned)  
 - **Rackmount Kit Price:** $50  
 - **Link:** [Etsy Rackmount Kit](https://www.etsy.com/listing/1417205328/arris-surfboard-s33-or-s34-cable-modem?ls=s&ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=10in+1u+rack+mount+harris+surfboard+s33&ref=sr_gallery-1-1&frs=1&sts=1&nob=1&content_source=a8a40f39-286e-4662-affb-a93538c956e1%253ALT4639b8691b02d74bea7c089b26a2100b70423dc1&organic_search_click=1&logging_key=a8a40f39-286e-4662-affb-a93538c956e1%3ALT4639b8691b02d74bea7c089b26a2100b70423dc1)
 
-### 3. Router
+### 2. Router
 - **Model:** Mikrotik RB5009 (already owned)  
 - **Rackmount Kit Price:** $20  
 - **Link:** [Amazon Rackmount Kit](https://www.amazon.com/Mikrotik-K-79-rackmount-RB5009-L009/dp/B0CP9RDHC9/ref=sr_1_1?crid=3JPU92J043ZPW&dib=eyJ2IjoiMSJ9.kqfbn0GGT0hLOoMfehekaCxKF6iYwuAKecbf8s8E5x1JrbW5WXkBcDwgCT6fw6Hed4Moqo1IiLo1w0d4IT4t14Hs_54_im-Wv4d6fjXitt9H92vLC-9U-FL0rbQOR1fCTGoJMj4gds2V3Qgym_hRn8wOz0Xxhwdz4QWSC6IT5mJqCaJ739fC8ODE6Qkm6JX4pxzGMeZwvNDzNu5bc6I9tXB-1LflI1-PBLunENUxtW8.tAFV2LMuHuGIoo_RTHrNG9Ckk6NCpr10dZTHvTrRMFM&dib_tag=se&keywords=mikrotik+rb5009+rackmount+kit&qid=1763833281&sprefix=mikrotik+rb5009%2Caps%2C185&sr=8-1)
+
+### 3. Patch Panel
+- **Model:** Keystone 12 Port Pass Thru Patch Panel 
+- **Price:** ~$30 total (new / Amazon)  
+- **Link:** [Patch Panel](https://www.amazon.com/Keystone-Support-Rapink-Shielded-Removable/dp/B09MTH3V14?pd_rd_w=HYv4P&content-id=amzn1.sym.53b72ea0-a439-4b9d-9319-7c2ee5c88973&pf_rd_p=53b72ea0-a439-4b9d-9319-7c2ee5c88973&pf_rd_r=HZYWPMP2SHM60SM6AWF1&pd_rd_wg=mejGb&pd_rd_r=fb67cfb8-fd95-449d-93e8-f6d026ee34aa&pd_rd_i=B09MTH3V14&psc=1&linkCode=sl1&tag=mmjjg-20&linkId=ed0e9e391744888147c556d160c23bee&language=en_US&ref_=as_li_ss_tl)  
 
 ### 4. Compute Nodes
 - **Model:** Dell Wyse 5070 Thin Client × 4  
@@ -29,11 +34,24 @@ This project documents the creation of a compact home lab setup, designed for **
 
 ### 5. PDU
 - **Model:** Dell Wyse 5070 Thin Client × 4  
-- **Price:** ~$120 total (2x 4 outlets)  
+- **Price:** ~$120 total (new / Amazon)  
 - **Link:** [10 in rack PDU](https://www.amazon.com/ElecVoztile-Protection-Overload-RackMount-Cabinets/dp/B0FF41T167/ref=sr_1_1?crid=1WL8UQSKZXZYV&dib=eyJ2IjoiMSJ9.Bu0xSY1SswhayzQUYafiCVnMgWqZf7fvv3qKdg9d1AGpgUOmJEdXOIIr7ylUTGq7i3NnL9WZVRqvBorF7xhuCvQYFD_0EH-lZNpRMneySlcYcYLzhzFLUF15mRy8xv4kGzYUPWArDgqGqPt-NDaBFfMdt1inNSlKZdHbLbP5OtJliK33masBTWjkzrZILBM5hlHAniGZna8IlfoQ0dwXGWgSye7bBpfkFqMYMoehc8zScQj30N4j7yfauxFMdDsFLGQJSD99bSlhgntMJvB24VXoQggodXchdYr053393OM.Y9Qg3B--ZmarkMDFWcW3CA0f5BKpmq-XpSVypOsti8A&dib_tag=se&keywords=TP1713+4-outlet+Mini+Rack+PDU&qid=1763837647&s=electronics&sprefix=tp1713+4-outlet+mini+rack+pdu%2Celectronics%2C182&sr=1-1)  
 
 ### 6. UPS (already owned)
-- **Model:** APC BN1500M@
+- **Model:** APC BN1500M2
+
+### Total Cost of Materials
+
+| Item                 | Cost (USD) |
+|---------------------|------------|
+| Rack                | $150       |
+| Modem Rack Mount    | $50        |
+| Router Rack Mount   | $20        |
+| Patch Panel         | $30        |
+| Computer Nodes      | $160       |
+| PDU                 | $120       |
+| Misc Patch Cables   | $30        |
+| **Total**           | **$560**   |
 
 
 ---
