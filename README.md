@@ -35,8 +35,7 @@ This project documents the creation of a compact home lab setup, designed for **
 
 ## **Rack Layout**
 ```bash
-U8 (Top)
-U1: Modem - Arris Surfboard S33
+U1: (Top) Modem - Arris Surfboard S33
 U2: Router - Mikrotik RB5009
 U3: Patch Panel
 U4: Dell Wyse 5070 Thin Client #1
