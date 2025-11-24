@@ -44,6 +44,10 @@ _An example of the DeskPI Rack T1 (8U) rack._
 - **Price:** ~$160 total (used / eBay)  
 - **Link:** [eBay Wyse 5070](https://www.ebay.com/sch/i.html?_nkw=wyse+5070+thin+client&_sacat=0&_from=R40&_trksid=p4624852.m570.l1311)  
 - **Upgrades:** Each node will be equipped with **32GB DDR4 RAM** and **512 GB NVME 2280 SSDs** from previous projects for improved performance.
+- **Power Draw:**
+- Idle: ~5–6 W
+- Light load: 7–10 W
+- Full CPU load: 13–15 W
 
 ### Notes:
 - Updating to the latest BIOS on these clients is recommended for stability.
@@ -91,15 +95,15 @@ U4: Dell Wyse 5070 Thin Client #1
 U5: Dell Wyse 5070 Thin Client #2
 U6: Dell Wyse 5070 Thin Client #3
 U7: Dell Wyse 5070 Thin Client #4
-U8 (Bottom): PDU
+U8 (Bottom): PDUs
 ```
 
 **Notes on Layout:**
 
 - Networking equipment is at the top for easy monitoring and cable management.  
-- Compute nodes occupy the middle 4U for stability and airflow.  
-- PDU at the bottom keeps the center of gravity low and allows clean upward routing of power cables.  
-- UPS is external due to mini-rack depth constraints.
+- Compute nodes occupy rack space towards the middle of the rack for stability and airflow.  
+- PDUs at the bottom keeps the center of gravity low and allows clean upward routing of power cables.  
+- UPS is external due to mini-rack space constraints.
 
 ---
 
