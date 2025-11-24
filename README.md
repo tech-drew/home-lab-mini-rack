@@ -11,6 +11,9 @@ This project documents the creation of a compact home lab setup, designed for **
 - **Price:** $150  
 - **Link:** [Amazon](https://www.amazon.com/GeeekPi-Cabinet-Equipment-RackMate-Rackmount/dp/B0CSCWVTQ7/ref=sr_1_2?crid=GDHRRH2UXRHZ&dib=eyJ2IjoiMSJ9.ctEHtcyHjljLot4TDmYNl004xVLEQxLpZ6ugneAQoWVkhRg059_UPw-724bbB1bXFfm6LohuAbtqAsw3Y_ZEye7Qc4MZkfSZiiaLHag1DHMgBd1no0EKbJ0-mZXOYH0hgPWFCIV2uGIPh01S6aZSlOyJRZ_7x74oMpAZ0z-fGocnI-kJR2dEKfzSLEl4ZJqIBLE0dZ3dHUGQY5rIRj6Tt9sq7-mFjNTY1nl513uWYpI.pNpAxwKHSyFE8YLJR-L5Uv-rvytRnUTUx0zTvjoTYb8&dib_tag=se&keywords=GeeekPi%2B8U%2BServer%2BCabinet&qid=1763829355&sprefix=geeekpi%2B8u%2Bserver%2Bcabinet%2Caps%2C230&sr=8-2&th=1)
 
+<img width="1400" height="788" alt="image" src="https://github.com/user-attachments/assets/42d80b2b-fe66-42c3-a23b-09caf1b81e0e" />
+
+
 ### 1. Modem
 - **Model:** Arris Surfboard S33 (already owned)  
 - **Rackmount Kit Price:** $50  
