@@ -31,7 +31,7 @@ This project documents the creation of a compact home lab setup, designed for **
 - **Price:** ~$160 total (used / eBay)  
 - **Link:** [eBay Wyse 5070](https://www.ebay.com/sch/i.html?_nkw=wyse+5070+thin+client&_sacat=0&_from=R40&_trksid=p4624852.m570.l1311)  
 - **Upgrades:** Each node will be equipped with **32GB DDR4 RAM** and **512 GB NVME 2280 SSDs** from previous projects for improved performance.
-- **Notes:**
+**Notes:**
 - Updating to the latest BIOS on these clients is recommended for stability.
 - These clients are reported to be reliable when running 24/7.
 - Memory: MemTest86 shows the J5005 CPU can efficiently address only ~30 GB of RAM; operations beyond that are slower but stable.
