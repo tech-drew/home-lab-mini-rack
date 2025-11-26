@@ -33,13 +33,22 @@ _An example of the DeskPI Rack T1 (8U) rack._
 - **Model:** Mikrotik RB5009 (already owned)  
 - **Rackmount Kit Price:** $20  
 - **Link:** [Amazon Rackmount Kit](https://www.amazon.com/Mikrotik-K-79-rackmount-RB5009-L009/dp/B0CP9RDHC9/ref=sr_1_1?crid=3JPU92J043ZPW&dib=eyJ2IjoiMSJ9.kqfbn0GGT0hLOoMfehekaCxKF6iYwuAKecbf8s8E5x1JrbW5WXkBcDwgCT6fw6Hed4Moqo1IiLo1w0d4IT4t14Hs_54_im-Wv4d6fjXitt9H92vLC-9U-FL0rbQOR1fCTGoJMj4gds2V3Qgym_hRn8wOz0Xxhwdz4QWSC6IT5mJqCaJ739fC8ODE6Qkm6JX4pxzGMeZwvNDzNu5bc6I9tXB-1LflI1-PBLunENUxtW8.tAFV2LMuHuGIoo_RTHrNG9Ckk6NCpr10dZTHvTrRMFM&dib_tag=se&keywords=mikrotik+rb5009+rackmount+kit&qid=1763833281&sprefix=mikrotik+rb5009%2Caps%2C185&sr=8-1)
+- **Note:** Extensive research went into deciding on the networking equipment for this project. The reasoning and analysis behind choosing the MikroTik RB5009 and cAP ax can be found in the [Networking Equipment Analysis](docs/networking-equipment-analysis.md) document.
 
-### 3. Patch Panel
+
+### 3. Access Points
+- **Model:** MikroTik cAP ax (already owned)
+- **Price:** ~$120 each (typical retail)
+- **Link:** [MikroTik cAP ax](https://mikrotik.com/product/cap_ax)
+- **Note:** Extensive research went into deciding on the networking equipment for this project. The reasoning and analysis behind choosing the MikroTik RB5009 and cAP ax can be found in the [Networking Equipment Analysis](docs/networking-equipment-analysis.md) document.
+
+
+### 4. Patch Panel
 - **Model:** Keystone 12 Port Pass Thru Patch Panel 
 - **Price:** ~$30 total (new / Amazon)  
 - **Link:** [Patch Panel](https://www.amazon.com/Keystone-Support-Rapink-Shielded-Removable/dp/B09MTH3V14?pd_rd_w=HYv4P&content-id=amzn1.sym.53b72ea0-a439-4b9d-9319-7c2ee5c88973&pf_rd_p=53b72ea0-a439-4b9d-9319-7c2ee5c88973&pf_rd_r=HZYWPMP2SHM60SM6AWF1&pd_rd_wg=mejGb&pd_rd_r=fb67cfb8-fd95-449d-93e8-f6d026ee34aa&pd_rd_i=B09MTH3V14&psc=1&linkCode=sl1&tag=mmjjg-20&linkId=ed0e9e391744888147c556d160c23bee&language=en_US&ref_=as_li_ss_tl)  
 
-### 4. Compute Nodes
+### 5. Compute Nodes
 - **Model:** Dell Wyse 5070 Thin Client × 4  
 - **Price:** ~$160 total (used / eBay)  
 - **Link:** [eBay Wyse 5070](https://www.ebay.com/sch/i.html?_nkw=wyse+5070+thin+client&_sacat=0&_from=R40&_trksid=p4624852.m570.l1311)  
@@ -61,7 +70,7 @@ _An example of the DeskPI Rack T1 (8U) rack._
 - The memory limitation is due to the CPU memory controller; rank configuration (single vs. dual) does not affect this.
 - With 32 GB of RAM and Secure Boot enabled, Windows will not boot; the boot switch only works with Secure Boot disabled.
 
-### 5. Storage
+### 6. Storage
 - **Model:** KingSpec 512 GB M.2 2280 SATA SSD  
 - **Price:** ~$40 new / $30–35 used  
 - **Link:** [Amazon KingSpec 512GB SATA SSD](https://www.amazon.com/KingSpec-512GB-Internal-Solid-NT-512/dp/B078MJHLCM/ref=sr_1_8?crid=209PTSVCAW3IL&dib=eyJ2IjoiMSJ9.UGh2mgu-tw2epCkB-ZBVrTGg1GDeeAUSLqYfQkuR4wCe8RLb1cb-oScjsBgWaYd6oSOoFiX4uZ-JzWNL0tD-WemctgN7dBqw4LFXytBB_VBpFhyVQtJfDsmqj0kKBGza3O_nV3MtFJYvMiF0aGfn2hmYCMHZa64BfVzU67VCUUgEarp4VqaZ3z9MIU-Y-6T_Q89HdvrCs2HCCJ0UmdiVGPZBtSPR14ohWZU8klWHSRk.yWz2mwjt4ReNXf6Wq6Lqa6d1mSQXNeZebsts8hVcoDA&dib_tag=se&keywords=m.2%2B2280%2Bsata%2Bssd%2B512gb&qid=1764137917&sprefix=m.2%2Bsata%2Bssd%2B2280%2B512%2Caps%2C179&sr=8-8&xpid=sNDlYSr9GFtA2&th=1)  
@@ -72,13 +81,13 @@ _An example of the DeskPI Rack T1 (8U) rack._
   - Ensure BIOS is updated and monitor health with SMART tools periodically.
   - I don't have a preference for this specific SSD brand. I choose whatever what cheapest with good reviews for this project.
   
-### 6. PDU
+### 7. PDU
 - **Model:** TP1713 4-outlet Mini Rack PDU x2
 - **Price:** ~$120 total (new / Amazon)  
 - **Link:** [10 in rack PDU](https://www.amazon.com/ElecVoztile-Protection-Overload-RackMount-Cabinets/dp/B0FF41T167/ref=sr_1_1?crid=1WL8UQSKZXZYV&dib=eyJ2IjoiMSJ9.Bu0xSY1SswhayzQUYafiCVnMgWqZf7fvv3qKdg9d1AGpgUOmJEdXOIIr7ylUTGq7i3NnL9WZVRqvBorF7xhuCvQYFD_0EH-lZNpRMneySlcYcYLzhzFLUF15mRy8xv4kGzYUPWArDgqGqPt-NDaBFfMdt1inNSlKZdHbLbP5OtJliK33masBTWjkzrZILBM5hlHAniGZna8IlfoQ0dwXGWgSye7bBpfkFqMYMoehc8zScQj30N4j7yfauxFMdDsFLGQJSD99bSlhgntMJvB24VXoQggodXchdYr053393OM.Y9Qg3B--ZmarkMDFWcW3CA0f5BKpmq-XpSVypOsti8A&dib_tag=se&keywords=TP1713+4-outlet+Mini+Rack+PDU&qid=1763837647&s=electronics&sprefix=tp1713+4-outlet+mini+rack+pdu%2Celectronics%2C182&sr=1-1)
 - **Notes:** There are better small form factor PDUs that support snmp and ssh for monitoring. The PDUs with these capabilities are around $300 each. I need two small form factor PDUs so it would be $600 just for PDUs. $600 for PDUs is outside the budget for this project.
 
-### 7. UPS (already owned)
+### 8. UPS (already owned)
 - **Model:** APC BN1500M2
 - **Notes:** I’ll upgrade to a pure-sine-wave UPS when I can. For now, I’m improvising with the equipment I have.
 
