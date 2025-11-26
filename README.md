@@ -128,6 +128,38 @@ _An example of the DeskPI Rack T1 (8U) rack._
 
 ---
 
+## Trade-offs and Limitations
+
+This home lab setup has been carefully designed for **learning, experimentation, and self-hosting**, with a focus on **cost efficiency** and **compactness**. Some trade-offs were made due to budget constraints and hardware limitations:
+
+1. **Compute Capacity**
+   - Dell Wyse 5070 thin clients provide modest CPU performance (Intel J5005) and limited memory addressing (~30 GB usable per 32 GB upgrade).  
+   - These nodes are **passively cooled and use very little power** (5–15 W depending on load), which is a significant benefit for a small, always-on lab.  
+   - High-performance nodes with more CPU power and memory typically cost **$200–$400 each**, which is outside the current budget.
+
+2. **Scalability**
+   - With 4 compute nodes, the lab is ideal for **small multi-node experiments**.  
+   - Expanding the number of nodes is possible, but additional nodes will require more rack space, power, and cooling considerations.
+
+3. **Power Management**
+   - Included PDUs are basic 4-outlet mini rack PDUs.  
+   - Managed PDUs with **SNMP and SSH capabilities** provide better monitoring and control but cost around **$300 each**, which is beyond the current budget.  
+   - Power and cable management is sufficient for this setup, but upgrading to managed PDUs is a potential future improvement.
+
+4. **Storage**
+   - M.2 SATA SSDs (512 GB) provide adequate storage for OS and lightweight workloads.  
+   - Used SSDs are cheaper ($30–35), but reliability is higher when purchasing new ($40).  
+   - Storage can be expanded later if larger workloads are needed.
+
+5. **Overall Design**
+   - The lab prioritizes **learning and experimentation** over raw performance.  
+   - It provides a **fully rack-mounted, low-power, and compact solution** that supports cloud engineering studies, self-hosted applications, and multi-node environments.
+
+**Conclusion:** This setup represents a balanced compromise between **budget, functionality, and expandability**, with the added benefit of low-power, passively cooled compute nodes. It’s an ideal starting point for students or hobbyists learning cloud computing, networking, and self-hosted infrastructure without incurring high costs.
+
+
+---
+
 ## **Future Plans**
 
 - Explore virtualization platforms like **Proxmox**, **Kubernetes**, or **Docker Swarm**.  
