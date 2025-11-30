@@ -50,7 +50,7 @@ _An example of the DeskPI Rack T1 (8U) rack._
 
 ### 5. Compute Nodes
 - **Model:** Dell Wyse 5070 Thin Client × 4  
-- **Price:** ~$160 total (used / eBay)  
+- **Price:** ~$155 total (used / Purchased 11/28/2025 on eBay)  
 - **Link:** [eBay Wyse 5070](https://www.ebay.com/sch/i.html?_nkw=wyse+5070+thin+client&_sacat=0&_from=R40&_trksid=p4624852.m570.l1311)  
 - **Upgrades:** Each node will be equipped with **32GB DDR4 RAM** from previous projects and **512GB 2280 sata SSDs** will be purchased for improved performance.
 - These clients do not support nvme 2280 SSDs. m.2 sata 2260/2280 SSDs must be used. 
@@ -71,9 +71,9 @@ _An example of the DeskPI Rack T1 (8U) rack._
 - With 32 GB of RAM and Secure Boot enabled, Windows will not boot; the boot switch only works with Secure Boot disabled.
 
 ### 6. Storage
-- **Model:** KingSpec 512 GB M.2 2280 SATA SSD  
-- **Price:** ~$40 new / $30–35 used  
-- **Link:** [Amazon KingSpec 512GB SATA SSD](https://www.amazon.com/KingSpec-512GB-Internal-Solid-NT-512/dp/B078MJHLCM/ref=sr_1_8?crid=209PTSVCAW3IL&dib=eyJ2IjoiMSJ9.UGh2mgu-tw2epCkB-ZBVrTGg1GDeeAUSLqYfQkuR4wCe8RLb1cb-oScjsBgWaYd6oSOoFiX4uZ-JzWNL0tD-WemctgN7dBqw4LFXytBB_VBpFhyVQtJfDsmqj0kKBGza3O_nV3MtFJYvMiF0aGfn2hmYCMHZa64BfVzU67VCUUgEarp4VqaZ3z9MIU-Y-6T_Q89HdvrCs2HCCJ0UmdiVGPZBtSPR14ohWZU8klWHSRk.yWz2mwjt4ReNXf6Wq6Lqa6d1mSQXNeZebsts8hVcoDA&dib_tag=se&keywords=m.2%2B2280%2Bsata%2Bssd%2B512gb&qid=1764137917&sprefix=m.2%2Bsata%2Bssd%2B2280%2B512%2Caps%2C179&sr=8-8&xpid=sNDlYSr9GFtA2&th=1)  
+- **Model:** Emtec X250 512 GB M.2 2280 SATA SSD  
+- **Price:** ~$170 total (new / Purchased 11/28/2025 on Amazon)  
+- **Link:** [Emtec X250 512GB SATA SSD](https://www.amazon.com/dp/B081HT8YYJ?ref=ppx_yo2ov_dt_b_fed_asin_title&th=1)  
 - **Notes:**  
   - Ideal for Wyse 5070 thin clients (SATA-only M.2 2280 slot).  
   - Used SSDs are cheaper ($30–35) but have some wear. The cost savings don''t justify the risk of issues at this price point.  
@@ -99,11 +99,11 @@ _An example of the DeskPI Rack T1 (8U) rack._
 | Modem Rack Mount    | $50        |
 | Router Rack Mount   | $20        |
 | Patch Panel         | $30        |
-| Computer Nodes      | $160       |
-| Storage (SSDs 4 × 512 GB)   | $160       |
+| Computer Nodes      | $155       |
+| Storage (SSDs 4 × 512 GB)   | $170       |
 | PDU                 | $120       |
 | Misc Patch Cables   | $30        |
-| **Total**           | **$720**   |
+| **Total**           | **$725**   |
 
 
 ---
