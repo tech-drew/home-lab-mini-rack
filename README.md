@@ -14,7 +14,7 @@ Updates will be added as the lab is built and configured.
 ---
 
 ## Hardware Components
-**Notes:** I’m putting this homelab together for about $720 by scavenging parts and jury-rigging whatever I have or can find to make it all work.
+**Notes:** I’m putting this homelab together for about $725 by scavenging parts and jury-rigging whatever I have or can find to make it all work.
 ### Rack
 - **Model:** DeskPi Rack T1 (8U)  
 - **Price:** $150  
