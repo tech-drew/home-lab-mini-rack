@@ -1,4 +1,4 @@
-# VPN Comparison: Tailscale vs. MikroTik RouterOS VPN
+# Comparison: Tailscale vs. MikroTik RouterOS VPN
 
 This document compares **Tailscale** and **MikroTik's built-in VPN options** for remote access and networking in a home lab environment. It highlights the strengths, weaknesses, and use cases for each solution.
 
