@@ -99,7 +99,7 @@ If you want remote access to devices on your LAN that **cannot run Tailscale**, 
    - On your MikroTik router, add a static route pointing to the Tailscale node as the gateway for the advertised subnet. For example:  
    /ip route add dst-address=192.168.88.0/24 gateway=<Tailscale_Node_IP>
 
-#### Diagram: Traffic Flow Through Subnet Router
+#### Traffic Flow Through Subnet Router
 
 Remote Client → Tailscale Network → Subnet Router Node (Wyse 5070) → LAN Devices (non-Tailscale nodes)
 
@@ -120,6 +120,9 @@ Remote Client → Tailscale Network → Subnet Router Node (Wyse 5070) → LAN D
    - The subnet router node becomes a single point of entry — it must remain powered and connected.
    - Some traffic may take an extra hop through the subnet router, potentially adding slight latency compared to direct Tailscale connections.
    - Proper firewall rules on the gateway node are recommended to secure LAN access.
+   - Traffic from remote clients to LAN devices that do not run Tailscale will flow through the subnet router node, potentially adding extra hops and latency. The example provided is illustrative—plan routing carefully in production to minimize backflow and ensure optimal performance.
+
+
 
 ## References / Further Reading
 - [Tailscale Documentation](https://tailscale.com/kb/) – Official Tailscale guides, setup instructions, and advanced features.  
