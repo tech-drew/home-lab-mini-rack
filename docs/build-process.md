@@ -12,6 +12,8 @@ This document outlines the complete process of building a mini rack for my cloud
 
 # BIOS Update for Dell Wyse 5070
 
+**Note: The Dell Wyse 5070 Thin Clients had bios versions ranging from 1.5.0 to 1.7.0 when I first recieved them.** 
+
 ## Steps:
 
 ### 1. Download the Latest BIOS Update
