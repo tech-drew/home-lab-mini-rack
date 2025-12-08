@@ -111,7 +111,7 @@ This creates two files:
 privatekey — your Fedora client’s private key
 publickey — the public key you will paste into MikroTik under WireGuard → Peers → Public Key
 
-8. Create WireGuard Client Configuration on Fedora
+# 8. Create WireGuard Client Configuration on Fedora
 
 Create the WireGuard configuration file:
 `sudo nano /etc/wireguard/wg-mikrotik.conf`
@@ -134,7 +134,7 @@ Replace:
 vpn.example.com — your public IP or Cloudflare DDNS domain
 Save and exit.
 
-9. Bring Up the WireGuard VPN on Fedora
+# 9. Bring Up the WireGuard VPN on Fedora
 Start the VPN:
 `sudo wg-quick up wg-mikrotik`
 
