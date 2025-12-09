@@ -10,7 +10,7 @@ This document outlines the complete process of building a mini rack for my cloud
 - Various tools for hardware maintenance
 
 
-# BIOS Update for Dell Wyse 5070
+# BIOS Update for Dell Wyse 5070 (12/07/2025)
 
 **Note: The Dell Wyse 5070 Thin Clients had bios versions ranging from 1.5.0 to 1.7.0 when I first recieved them.** 
 
@@ -34,7 +34,7 @@ This document outlines the complete process of building a mini rack for my cloud
 - After the update is complete, enter the BIOS settings to verify that the update was successful.
 - Check the BIOS version to ensure it matches the new version (1.39.0 as of 12/07/2025).
 
-## **Upgrading RAM to 32GB on Wyse 5070**
+## **Upgrading RAM to 32GB on Wyse 5070** (12/07/2025)
 
 ### **Memory Considerations:**
 - **CPU Limitation**: The **Intel J5005 CPU** can efficiently address only around **30 GB** of RAM. While you can install **32 GB**, about **2 GB will remain unaddressed** due to limitations in the CPU’s memory controller. 
@@ -60,12 +60,16 @@ This document outlines the complete process of building a mini rack for my cloud
 
 ## Step 4: Hardware Maintenance & Upgrades
 
-### Cleaning Dead Bugs from Wyse Client
+### Cleaning Dead Bugs from Wyse Client (12/07/2025)
 
 One of the Wyse 5070 units had an issue with internal dust and dead bugs. I used a vacuum cleaner to clean the components. Below is a photo of the unit after I opened it before it was cleaned:
 
 ![Wyse 5070 with Dead Bugs](images/wyse-bugs.jpg)
 
 This image shows the internal components of the device before cleaning.
+
+## Mikrotik Wireguard VPN Setup (12/08/2025)
+
+Setup on 12/08/2025 Following the directions listed [here](mikrotik-wireguard-vpn-setup.md)
 
 
