@@ -70,6 +70,6 @@ This image shows the internal components of the device before cleaning.
 
 ## Mikrotik Wireguard VPN Setup (12/08/2025)
 
-Setup on 12/08/2025 Following the directions listed [here](mikrotik-wireguard-vpn-setup.md)
+Setup following the directions listed [here](mikrotik-wireguard-vpn-setup.md)
 
 
