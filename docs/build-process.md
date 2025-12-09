@@ -72,4 +72,92 @@ This image shows the internal components of the device before cleaning.
 
 Setup following the directions listed [here](mikrotik-wireguard-vpn-setup.md)
 
+## To Do List
+# **1. Start With the Base OS**
+
+Pick one lightweight server OS for all Wyse nodes (Ubuntu Server or Rocky/Alma).
+Do identical installs so they behave like a small fleet.
+
+---
+
+# **2. Set Up NTP, Syslog, and Backups (But Keep It Simple)**
+
+These are “foundational services” that every real cluster needs.
+
+### **NTP**
+
+* Run systemd-timesyncd or chrony on all nodes.
+* You *can* point them to a local NTP server on one node, but for a small home cluster, pointing them all to public pool servers is fine.
+
+### **Syslog**
+
+* Run **rsyslog** or **syslog-ng** on each node.
+* Then pick ONE Wyse node to act as a **central log collector** so you can view all logs in one place (good practice for SAA).
+
+### **Backups**
+
+* Back up each node’s config + `/etc` + any data directories to one node using:
+
+  * `rsync -a`
+  * or Restic / BorgBackup
+
+---
+
+
+
+---
+
+# **4. The Build Process (High-Level Blueprint)**
+
+Here’s the order you should build your lab in:
+
+### **Step 1 — Prep your Wyse nodes**
+
+* OS installed
+* hostname, static IPs or DHCP reservations
+* SSH access
+* NTP, syslog, backups
+* Firewall baseline
+* Add them to `/etc/hosts` for name resolution
+
+### **Step 2 — Pick 1 Wyse node as the “control-plane”**
+
+Install **K3s server** on that one:
+
+```
+curl -sfL https://get.k3s.io | sh -
+```
+
+### **Step 3 — Install K3s agents on the other 3 Wyse nodes**
+
+They join to the control-plane using a join token.
+
+### **Step 4 — Verify the cluster**
+
+You now have a working distributed Kubernetes setup:
+
+* 1 control-plane
+* 3 workers
+
+### **Step 5 — Deploy small services**
+
+This is where the AWS learning kicks in:
+
+* Deploy an app
+* Expose it
+* Setup load balancing
+* Test failure by shutting a node down
+
+### **Step 6 — Use your Legion laptop for AWS tools**
+
+Run:
+
+* LocalStack
+* Terraform
+* AWS CLI
+* Docker
+* Databases
+* CI/CD tools
+
+
 
