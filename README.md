@@ -18,13 +18,10 @@ Updates will be added as the lab is built and configured.
 
 ### 1. Modem
 - **Model:** Arris Surfboard S33 (already owned)  
-- **Rackmount Kit Price:** $50  
-- **Link:** [Etsy Rackmount Kit](https://www.etsy.com/listing/1417205328/arris-surfboard-s33-or-s34-cable-modem?ls=s&ga_order=most_relevant&ga_search_type=all&ga_view_type=gallery&ga_search_query=10in+1u+rack+mount+harris+surfboard+s33&ref=sr_gallery-1-1&frs=1&sts=1&nob=1&content_source=a8a40f39-286e-4662-affb-a93538c956e1%253ALT4639b8691b02d74bea7c089b26a2100b70423dc1&organic_search_click=1&logging_key=a8a40f39-286e-4662-affb-a93538c956e1%3ALT4639b8691b02d74bea7c089b26a2100b70423dc1)
+
 
 ### 2. Router
 - **Model:** Mikrotik RB5009 (already owned)  
-- **Rackmount Kit Price:** $20  
-- **Link:** [Amazon Rackmount Kit](https://www.amazon.com/Mikrotik-K-79-rackmount-RB5009-L009/dp/B0CP9RDHC9/ref=sr_1_1?crid=3JPU92J043ZPW&dib=eyJ2IjoiMSJ9.kqfbn0GGT0hLOoMfehekaCxKF6iYwuAKecbf8s8E5x1JrbW5WXkBcDwgCT6fw6Hed4Moqo1IiLo1w0d4IT4t14Hs_54_im-Wv4d6fjXitt9H92vLC-9U-FL0rbQOR1fCTGoJMj4gds2V3Qgym_hRn8wOz0Xxhwdz4QWSC6IT5mJqCaJ739fC8ODE6Qkm6JX4pxzGMeZwvNDzNu5bc6I9tXB-1LflI1-PBLunENUxtW8.tAFV2LMuHuGIoo_RTHrNG9Ckk6NCpr10dZTHvTrRMFM&dib_tag=se&keywords=mikrotik+rb5009+rackmount+kit&qid=1763833281&sprefix=mikrotik+rb5009%2Caps%2C185&sr=8-1)
 - **Note:** Extensive research went into deciding on the networking equipment for this project. The reasoning and analysis behind choosing the MikroTik RB5009 and cAP ax can be found in the [Networking Equipment Analysis](docs/networking-equipment-analysis.md) document.
 
 
