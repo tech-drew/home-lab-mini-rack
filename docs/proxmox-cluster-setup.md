@@ -110,20 +110,28 @@ pvecm nodes
 # Check the Proxmox cluster service
 systemctl status pve-cluster
 ```
+## 5. Setup Proxmox with the non-enterprise repo. 
 
-**Tips:**
+The enterprise repo requires a license. For the purpose of using a home-lab the enterprise features are not needed. But regardless it is strongly recommended to support the creatures of Proxmox.
 
-* `pvecm status` shows **quorum**, node membership, and cluster configuration version.
-* All nodes should be **quorate** and online.
-* If a node fails to join, double-check `/etc/hosts`, network connectivity, and firewall settings.
+The correct repos were setup by using the Proxmox PVE Post Install script found here. https://community-scripts.github.io/ProxmoxVE/scripts?id=post-pve-install
 
----
+- The enterprise repos were disabled.
+- The PVE No Subscription Repo was enabled.
+- The test repos were disabled
+- High Availability was left enabled since this is a cluster. I don't know if I will use any high availability features at this time.
+- The notification to active a license was disabled.
 
-## 5. Optional Best Practices
+## 6. Setup Proxmox Backups
 
-* Use **short, descriptive hostnames** like `node1`, `node2`, etc.
-* Keep `/etc/hosts` **identical on all nodes**.
-* Avoid special characters in hostnames.
-* Plan for future expansion by numbering nodes sequentially.
+Proxmox allows you to automatically back up virtual machines and snapshots on a schedule you define. If you have a NAS (Network Attached Storage), Proxmox can be configured to back up to it. However, as of December 27, 2025, I do not have a NAS. For now, I am using **local backups**. I plan to set up a NAS in the future once I can afford one. Currently, **budget constraints** are preventing me from purchasing a NAS.
 
-```
+I followed this guide to set up my backups: [Proxmox Backup Setup Guide](https://www.youtube.com/watch?v=lFzWDJcRsqo).
+
+### Current Backup Settings
+
+- **Backup Schedule:** Daily at 00:00
+- **Retention Policy:** Keep 1 backup
+
+**Note:** Each Dell Wyse 5070 Thin Client has a 256GB NVMe SSD. At the moment, this storage is used for Proxmox, virtual machines, containers, and backups. Due to the limited storage capacity, the retention policy is set to keep only one backup at a time. This setup is a "jury-rigged" solution using available equipment to build the homelab, and for now, I am making the best of the limited resources.
+
