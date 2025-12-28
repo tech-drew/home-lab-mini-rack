@@ -73,12 +73,16 @@ This image shows the internal components of the device before cleaning.
 Setup following the directions listed [here](mikrotik-wireguard-vpn-setup.md)
 
 
-# *1. Setup Proxmox Cluster* (12/24/2025)
-
+# 1. Setup Proxmox Cluster (12/24/2025)
 Proxmox was installed on each node to be used as the hyprvisor. Next Tailscale was installed on each node in the Proxmox cluster for remote access. 
 
-# *2. Setup Proxmox Repo and Backups* (12/27/2025)
+# 2. Setup Proxmox Repo and Backups (12/27/2025)
 Each node was updated to use the pve-no-subscription repo and configured to automatically create backups.
+
+# 3. Setup NTP server on Mikrotik Router (12/27/2025)
+Mikrotik Management Interface>System>NTP Server>Enabled.
+
+After the NTP server was enabled the Proxmox nodes were updated to use the Mikrotik router NTP server. This is helpful as later I will setup a Syslog VM (Virtual Machine) and all devices in the home-lab will sync their time to the Mikrotik Router NTP server. 
 
 
 ---
