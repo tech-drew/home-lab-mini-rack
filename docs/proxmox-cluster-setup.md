@@ -135,9 +135,9 @@ I followed this guide to set up my backups: [Proxmox Backup Setup Guide](https:/
 
 **Note:** Each Dell Wyse 5070 Thin Client has a 256GB NVMe SSD. At the moment, this storage is used for Proxmox, virtual machines, containers, and backups. Due to the limited storage capacity, the retention policy is set to keep only one backup at a time. This setup is a "jury-rigged" solution using available equipment to build the homelab, and for now, I am making the best of the limited resources.
 
-## 7. Add isos to each node
+## 7. Add ISOs to each node
 
-Here are the directions to add a iso to a node locally. Best Practice is to use a NAS. If you don't have a NAS, you can add the ISO onto each node.
+Here are the directions to add a ISO to a node locally. Best Practice is to use a NAS. If you don't have a NAS, you can add the ISO onto each node.
 
 - Click on a Node>Local>Iso Images>Upload an Iso.
 - Kubuntu 24.0.3 will be used as a starter image. Ubuntu has a bunch of community support. However, I don't like gnome, so I will use Kubuntu so I have access to the KDE Plasma GUI whenever a GUI is necessary.
