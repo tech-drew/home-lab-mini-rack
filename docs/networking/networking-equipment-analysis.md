@@ -42,3 +42,4 @@ For my home network and lab, the MikroTik router alone meets all routing and fir
 - **Multi-AP setups:** For seamless roaming, consider pairing a MikroTik router with Ubiquiti APs.
 - **Hands-on learning:** MikroTik is excellent for exploring routing, VLANs, firewalling, and Layer 3 networking.
 
+
