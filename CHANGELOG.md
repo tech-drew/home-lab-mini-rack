@@ -18,3 +18,7 @@
 | Version | Date       | Type  | Description |
 |--------|------------|-------|-------------|
 | 1.2.0  | 2026-01-02 | Added | Added Proxmox backup automation |
+
+--- 
+
+Enter new entries here:
