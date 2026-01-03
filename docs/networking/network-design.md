@@ -6,18 +6,18 @@
 
 This guide describes how to configure an **enterprise-style, secure, and scalable VLAN design** on a MikroTik RB5009 using RouterOS.
 
-This design **explicitly separates infrastructure management from workloads**, following best practices for Proxmox, virtualization security, and network segmentation.
+This design **explicitly separates infrastructure management from workloads**, following best practices for Proxmox, virtualization security, and network segmentation. It enforces isolation between VLANs and uses firewall rules to restrict unauthorized access.
 
 ---
 
 ## Goals
 
-* Separate **infrastructure management** from **server workloads**
-* Secure Proxmox hypervisors from VM compromise
-* Enforce security using **firewall rules**, not just VLANs
-* Allow trusted Wi-Fi devices to access servers when required
-* Isolate IoT, guest, and backup networks
-* Scale cleanly in the future
+* Separate **infrastructure management** from **server workloads**.
+* Secure Proxmox hypervisors from VM compromise.
+* Enforce security using **firewall rules**, not just VLANs.
+* Allow trusted Wi-Fi devices to access servers when required.
+* Isolate IoT, guest, and backup networks.
+* Scale cleanly in the future.
 
 ---
 
@@ -25,19 +25,31 @@ This design **explicitly separates infrastructure management from workloads**, f
 
 ### VLAN Plan
 
-| VLAN ID | Name    | Subnet         | Purpose                                  |
-| ------: | ------- | -------------- | ---------------------------------------- |
+| VLAN ID | Name    | Subnet         | Purpose                              |
+| ------: | ------- | -------------- | ------------------------------------ |
 |      10 | SERVERS | 10.100.10.0/24 | VMs and containers only              |
-|      20 | TRUSTED | 10.100.20.0/24 | Laptops, phones (Wi-Fi)                  |
-|      30 | GUEST   | 10.100.30.0/24 | Guest Wi-Fi                              |
-|      40 | IOT     | 10.100.40.0/24 | IoT devices, printers, cameras           |
-|      50 | BACKUP  | 10.100.50.0/24 | Backup NAS (TrueNAS)                     |
+|      20 | TRUSTED | 10.100.20.0/24 | Laptops, phones (Wi-Fi)              |
+|      30 | GUEST   | 10.100.30.0/24 | Guest Wi-Fi                          |
+|      40 | IOT     | 10.100.40.0/24 | IoT devices, printers, cameras       |
+|      50 | BACKUP  | 10.100.50.0/24 | Backup NAS (TrueNAS)                 |
 |      99 | MGMT    | 10.100.99.0/24 | Router, switches, APs, Proxmox hosts |
+
+---
+
+## VLAN Access Control Summary
+
+VLAN 10 (Servers) hosts application workloads, including VMs and containers. It is accessible only from Trusted VLAN 20 and the management VLAN 99, and it has restricted access to Backup VLAN 50. VLAN 20 (Trusted) can access VLAN 10 (Servers) but **cannot access VLAN 50 (Backup) or VLAN 99 (Management)**. VLAN 30 (Guest) and VLAN 40 (IoT) only have Internet access and cannot reach any internal VLANs. VLAN 50 (Backup) is accessible **only** by VLAN 10 (Servers), and VLAN 99 (Management) is reserved strictly for administrative access from authorized devices.
+
+The CAP ax AP is physically connected to the bridge and managed on VLAN 99. It bridges client traffic to VLANs 20, 30, and 40 via SSIDs. VLAN 99 is only reachable by authorized admin devices; VLAN 50 is not accessible to Wi-Fi clients.
+
+Workload VMs, such as rsyslog, monitoring systems, or other services, reside in VLAN 10. They do not run on hypervisors or the router, and they do not require direct access to VLAN 50 or VLAN 99.
+
+---
 
 ## IP Addressing Standards
 
-* Gateways: `.1` of each subnet
-* DHCP pools start at `.100`
+* Gateways: `.1` of each subnet.
+* DHCP pools start at `.100`.
 * Static IPs for:
 
   * Proxmox hosts
@@ -49,10 +61,10 @@ This design **explicitly separates infrastructure management from workloads**, f
 
 | Host  | IP Address   |
 | ----- | ------------ |
-| node1 | 10.100.99.11 |
-| node2 | 10.100.99.12 |
-| node3 | 10.100.99.13 |
-| node4 | 10.100.99.14 |
+| pve-node1 | 10.100.99.11 |
+| pve-node2 | 10.100.99.12 |
+| pve-node3 | 10.100.99.13 |
+| pve-node4 | 10.100.99.14 |
 
 ---
 
@@ -137,7 +149,7 @@ add address=10.100.99.1/24 interface=vlan99
 
 ## Step 6 – DHCP Servers
 
-**No DHCP on SERVERS or MGMT VLANs**
+**No DHCP on SERVERS, MGMT, or BACKUP VLANs.**
 
 ```mikrotik
 /ip pool
@@ -157,32 +169,30 @@ add interface=vlan40 address-pool=pool40 disabled=no
 
 Each Proxmox node:
 
-* Management IP on **VLAN 99**
-* VLAN-aware bridge (`vmbr0`) with **no IP**
-* VMs and containers tagged into:
-
-  * VLAN 10 (SERVERS)
-  * Additional VLANs only if explicitly required
+* Management IP on **VLAN 99**.
+* VLAN-aware bridge (`vmbr0`) with **no IP**.
+* VMs and containers tagged into VLAN 10 (SERVERS). Additional VLANs are only added if explicitly required.
 
 This ensures:
 
-* Hypervisors are isolated from workloads
-* Compromised VMs cannot access management
-* Clean firewall enforcement
+* Hypervisors are isolated from workloads.
+* Compromised VMs cannot access management VLAN.
+* Firewall rules enforce strict VLAN isolation.
 
 ---
 
-## Firewall Policy Summary (MGMT Emphasis)
+## Firewall Policy Summary
 
 ### Key Rules
 
-* TRUSTED → MGMT: **Allowed**
-* SERVERS → MGMT: **Denied**
-* GUEST / IOT → MGMT: **Denied**
-* Proxmox → BACKUP: **Allowed**
-* Everything else → BACKUP: **Denied**
+* TRUSTED → SERVERS: Allowed
+* TRUSTED → MGMT: Allowed for admin devices only
+* TRUSTED → BACKUP: Denied
+* SERVERS → BACKUP: Allowed
+* SERVERS → MGMT: Denied
+* GUEST / IOT → any internal VLAN: Denied
 
-### Explicit MGMT Protection
+### Explicit MGMT and Backup Protection
 
 ```mikrotik
 # Allow trusted devices to management
@@ -190,19 +200,35 @@ add chain=forward src-address=10.100.20.0/24 dst-address=10.100.99.0/24 action=a
 
 # Block all other access to management
 add chain=forward dst-address=10.100.99.0/24 action=drop
+
+# Allow hypervisors to backup NAS
+add chain=forward src-address-list=proxmox_hosts dst-address-list=backup_nas action=accept
+
+# Block all other access to backup
+add chain=forward dst-address=10.100.50.0/24 action=drop
 ```
 
 ---
 
-## Best Practices (Updated)
+## Remote Management Note
 
-* Hypervisors are **management infrastructure**
-* Workloads never share a subnet with hypervisors
-* Trunk ports for virtualization hosts
-* Default deny between VLANs
-* Static IPs for all infrastructure
-* Backup network reachable **only** from hypervisors
-* Document VLAN usage and IP assignments
+Since physical access to VLAN 99 may be limited, remote administrative access can be achieved via:
+
+* Secure VPN (e.g., Tailscale) connecting to VLAN 10 or a jump host.
+* Ensuring firewall rules restrict VPN clients to only authorized devices/subnets.
+* Avoiding direct exposure of VLAN 99 or VLAN 50 to Wi-Fi clients.
+
+---
+
+## Best Practices
+
+* Hypervisors are **management infrastructure** and never share a subnet with workloads.
+* Trunk ports for virtualization hosts.
+* Default deny between VLANs.
+* Static IPs for all infrastructure.
+* Backup network reachable **only** from hypervisors.
+* Document VLAN usage and IP assignments.
+* Log aggregation and monitoring services should reside in VLAN 10.
 
 ---
 
@@ -210,7 +236,9 @@ add chain=forward dst-address=10.100.99.0/24 action=drop
 
 This design:
 
-* Follows enterprise Proxmox deployment standards
-* Strongly limits blast radius from VM compromise
-* Keeps management isolated and auditable
-* Scales cleanly as the lab grows
+* Follows enterprise Proxmox deployment standards.
+* Strongly limits blast radius from VM compromise.
+* Keeps management isolated and auditable.
+* Scales cleanly as the lab grows.
+* Provides secure remote management without exposing sensitive VLANs to Wi-Fi or untrusted networks.
+document. Do you want me to do that?
