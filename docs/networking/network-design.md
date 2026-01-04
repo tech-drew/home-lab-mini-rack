@@ -195,6 +195,8 @@ This ensures:
 ### Explicit MGMT and Backup Protection
 
 ```mikrotik
+/ip firewall filter print
+
 # Allow trusted devices to management
 add chain=forward src-address=10.100.20.0/24 dst-address=10.100.99.0/24 action=accept
 
@@ -241,4 +243,4 @@ This design:
 * Keeps management isolated and auditable.
 * Scales cleanly as the lab grows.
 * Provides secure remote management without exposing sensitive VLANs to Wi-Fi or untrusted networks.
-document. Do you want me to do that?
+document.
