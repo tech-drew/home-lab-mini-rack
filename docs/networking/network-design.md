@@ -80,6 +80,32 @@ Workload VMs, such as rsyslog, monitoring systems, or other services, reside in 
 
 ---
 
+## Important Warning – Read Before Proceeding
+
+MikroTik RouterOS is extremely unforgiving of configuration mistakes. A single incorrect command—especially when working with bridges, VLAN filtering, or firewall rules—can immediately lock you out of the device.
+
+While following this guide, you may lose management access, break connectivity, or require multiple factory resets as you iterate and correct errors. This is normal when learning or refining complex RouterOS configurations.
+
+The steps below are not guaranteed to work for every environment. They represent general guidelines, not a copy-and-paste solution. Hardware differences, RouterOS versions, existing configurations, and physical topology all matter.
+
+Before you continue:
+
+Ensure you have physical access to the router.
+
+Export and save your current configuration.
+
+Apply changes incrementally and verify access after each major step.
+
+Do not enable vlan-filtering=yes until you fully understand its impact.
+
+Strongly recommended: download and use WinBox. WinBox can often reconnect to the router via MAC address even when IP connectivity is broken, making it an essential recovery tool while building and testing your configuration. Winbox can be downloaded here: https://mikrotik.com/download/winbox
+
+Expect to troubleshoot, rollback, and adjust.
+
+Proceed only if you are comfortable recovering the device and rebuilding the configuration from scratch if necessary.
+
+---
+
 ## Step 1 – Create the Bridge
 
 ```
