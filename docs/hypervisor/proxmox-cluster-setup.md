@@ -142,3 +142,8 @@ Here are the directions to add a ISO to a node locally. Best Practice is to use 
 - Click on a Node>Local>Iso Images>Upload an Iso.
 - Kubuntu 24.0.3 will be used as a starter image. Ubuntu has a bunch of community support. However, I don't like gnome, so I will use Kubuntu so I have access to the KDE Plasma GUI whenever a GUI is necessary.
 - A lot of VM management can be done via SSH. So I don't expect to heavily rely on GUIs.
+## 8. Proxmox Hepler Scripts
+
+The following website can be used to get a bunch of useful scripts to help automate proxmox work. In particular, I found the `pve post install` script to be very helpful.
+
+https://community-scripts.github.io/ProxmoxVE/scripts
