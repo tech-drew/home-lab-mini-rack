@@ -120,9 +120,3 @@ add action=drop chain=forward comment="Drop IoT/Guest to Trusted" in-interface-l
 
 
 ---
-
-### Summary of updates made:
-* Added **VLAN 60** (Storage) to the VLAN Plan and IP tables.
-* Updated the **Physical Port Layout** table to show your specific PVIDs (99 for servers, 20 for your PC).
-* Revised the **Firewall Policy** to show the "Allow then Drop" logic we finalized.
-* Included the **Hybrid Trunk** explanation for Proxmox (untagged management + tagged data).
