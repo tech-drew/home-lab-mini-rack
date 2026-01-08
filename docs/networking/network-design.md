@@ -73,6 +73,48 @@ This design **explicitly separates infrastructure management and storage backpla
 
 ---
 
+## MikroTik Administration: Winbox and Safe Mode
+
+To manage an RB5009 effectively, two tools are essential: Winbox and Safe Mode. Together, they provide a "safety net" that allows you to perform complex network reconfigurations without the risk of a permanent lockout.
+
+### What is Winbox?
+
+Winbox is a native MikroTik management utility designed specifically for RouterOS. It offers a fast, robust, and visual interface for system administration.
+
+MAC-Level Access: Unlike a web browser, Winbox can connect to a router via its MAC address. This ensures you maintain control even if you misconfigure an IP address or break a VLAN setting.
+
+Visual Workflow: Its multi-window interface allows you to monitor logs, traffic graphs, and firewall rules simultaneously in real-time.
+
+Device Discovery (Neighbors): Winbox automatically scans your local network for MikroTik devices. This makes initial setup and emergency recovery much simpler than searching for an unknown or misconfigured IP address.
+
+Winbox can be downloaded from: https://mikrotik.com/download/winbox
+
+### What is Safe Mode?
+
+Safe Mode acts as a stateful "Undo" button for your router’s configuration. When enabled, the router tracks every change made during that specific session in a temporary buffer.
+
+The Safety Trigger: If your management connection is interrupted (e.g., you apply a firewall rule that blocks your own access), the router waits briefly. If the connection is not restored, it automatically rolls back every change made since Safe Mode was activated.
+
+Peace of Mind: This prevents the "Walk of Shame"—the need to physically access the router to perform a factory reset because of a simple configuration typo or logic error.
+
+### Why You Should Use Winbox and Safe mode
+
+Reliability: Combining Winbox (via MAC connection) with Safe Mode is the gold standard for network engineers. It ensures that structural changes—such as enabling VLAN Filtering or modifying Firewall Chains—can be tested safely.
+
+Operational Discipline: Using these tools demonstrates a professional "Change Management" mindset. Rather than guessing at commands, you are operating in a controlled environment where errors are non-destructive.
+
+### Safe Mode Workflow
+
+Follow these steps to ensure a safe configuration process:
+
+Enter Safe Mode: Before initiating any high-risk changes, click the Safe Mode button at the top left of Winbox (or press CTRL + X in the Terminal).
+
+Apply Changes: Execute your configuration updates, such as adjusting VLAN IDs, bridge settings, or firewall rules.
+
+Verify Access: Confirm that you can still reach your servers, the internet, and the router’s management interface.
+
+Commit Changes: Once you have verified that everything is functioning correctly, click the Safe Mode button again to toggle it off. This "commits" your changes permanently to the router's memory.
+
 ## Key Configuration Snippets
 
 ### Bridge Port & VLAN Tagging
