@@ -1,4 +1,4 @@
-## Overview
+## Network Design Summary
 
 This guide describes how to configure an **enterprise-style, secure, and scalable VLAN design** on a MikroTik RB5009 using RouterOS.
 
@@ -8,9 +8,9 @@ Following the **CIS (Center for Internet Security) Critical Security Controls**,
 
 ## Goals
 
-* **Create an enterprise-style secure and scalable VLAN Design:** 
-* **Follow Enterprise Networking and CyberSecurity Best Practices:** 
-* **Learn how to be a better tech professional:**
+* **Create an enterprise-style secure and scalable VLAN Design**
+* **Follow Enterprise Networking and CyberSecurity Best Practices**
+* **Learn how to be a better tech professional**
 
 ---
 
@@ -18,16 +18,16 @@ Following the **CIS (Center for Internet Security) Critical Security Controls**,
 
 ### VLAN Plan
 
-| VLAN ID | Name | Subnet | Purpose |
-| --- | --- | --- | --- |
-| 10 | SERVERS | 10.100.10.0/24 | VMs and containers only |
-| 20 | TRUSTED | 10.100.20.0/24 | Admin devices, Laptops, Phones |
-| 30 | GUEST | 10.100.30.0/24 | Guest Wi-Fi |
-| 40 | IOT | 10.100.40.0/24 | IoT devices, printers, cameras |
-| 50 | BACKUP | 10.100.50.0/24 | Backup NAS (TrueNAS) |
-| 60 | STORAGE | 10.100.60.0/24 | Proxmox Storage / Cluster Heartbeat |
-| 99 | MGMT | 10.100.99.0/24 | Router, Switches, APs, PVE Hosts |
-| 999 | NATIVE_SINK | None | Dead-end for Untagged Trunk Traffic |
+| VLAN ID | Name        | Subnet         | Purpose                             |
+| ------- | ----------- | -------------- | ----------------------------------- |
+| 10      | SERVERS     | 10.100.10.0/24 | VMs and containers only             |
+| 20      | TRUSTED     | 10.100.20.0/24 | Admin devices, Laptops, Phones      |
+| 30      | GUEST       | 10.100.30.0/24 | Guest Wi-Fi                         |
+| 40      | IOT         | 10.100.40.0/24 | IoT devices, printers, cameras      |
+| 50      | BACKUP      | 10.100.50.0/24 | Backup NAS (TrueNAS)                |
+| 60      | STORAGE     | 10.100.60.0/24 | Proxmox Storage / Cluster Heartbeat |
+| 99      | MGMT        | 10.100.99.0/24 | Router, Switches, APs, PVE Hosts    |
+| 999     | NATIVE_SINK | None           | Dead-end for Untagged Trunk Traffic |
 
 ---
 
@@ -41,7 +41,7 @@ Following the **CIS (Center for Internet Security) Critical Security Controls**,
 
 **VLAN 50 (Backup)** is restricted to authorized backup initiators within VLAN 10 (Servers).
 
-**VLAN 60 (Storage)** is a high-priority, dedicated segment for **Proxmox HA storage/migration**. Access is restricted to Proxmox Host address lists. **Jumbo Frames (MTU 9000)** are enabled for high-throughput disk replication.
+**VLAN 60 (Storage)** is a high-priority, dedicated segment for **Proxmox HA storage, replication, and migration traffic**. Access is restricted to Proxmox host address lists.
 
 **VLAN 99 (Management)** is for infrastructure hardware. Not reachable from Guest or IoT.
 
@@ -51,13 +51,14 @@ Following the **CIS (Center for Internet Security) Critical Security Controls**,
 
 ## Physical Port Layout (RB5009)
 
-| Port | Device | Mode | Native VLAN (PVID) |
-| --- | --- | --- | --- |
-| ether1 | ISP Modem | WAN | N/A |
-| ether2 | CAP ax AP | Trunk (10, 20, 30, 40, 99) | 999 (NATIVE_SINK) |
-| ether3 | Spare/Admin | Access | 99 (MGMT) |
-| ether4 | Admin/Wired PC | Trunk (20, 60, 99) | 999 (NATIVE_SINK) |
-| ether5–ether8 | Proxmox Cluster | Hybrid Trunk (10, 60) | 99 (MGMT) |
+| Port          | Device          | Mode                       | Native VLAN (PVID) |
+| ------------- | --------------- | -------------------------- | ------------------ |
+| ether1        | ISP Modem       | WAN                        | N/A                |
+| ether2        | CAP ax AP       | Trunk (10, 20, 30, 40, 99) | 999 (NATIVE_SINK)  |
+| ether3        | Spare/Admin     | Access                     | 99 (MGMT)          |
+| ether4        | Admin/Wired PC  | Trunk (20, 60, 99)         | 999 (NATIVE_SINK)  |
+| ether5–ether8 | Proxmox Cluster | Hybrid Trunk (10, 60)      | 99 (MGMT)          |
+
 ---
 
 ## MikroTik Administration: Winbox and Safe Mode
@@ -70,31 +71,31 @@ Winbox is a native MikroTik management utility designed specifically for RouterO
 
 * **MAC-Level Access:** Unlike a web browser, Winbox can connect to a router via its MAC address. This ensures you maintain control even if you misconfigure an IP address or break a VLAN setting.
 * **Visual Workflow:** Its multi-window interface allows you to monitor logs, traffic graphs, and firewall rules simultaneously in real-time.
-* **Device Discovery (Neighbors):** Winbox automatically scans your local network for MikroTik devices. This makes initial setup and emergency recovery much simpler than searching for an unknown or misconfigured IP address.
+* **Device Discovery (Neighbors):** Winbox automatically scans your local network for MikroTik devices.
 
 ### What is Safe Mode?
 
 Safe Mode acts as a stateful "Undo" button for your router’s configuration. When enabled, the router tracks every change made during that specific session in a temporary buffer.
 
-* **The Safety Trigger:** If your management connection is interrupted (e.g., you apply a firewall rule that blocks your own access), the router waits briefly. If the connection is not restored, it automatically rolls back every change made since Safe Mode was activated.
-* **Peace of Mind:** This prevents the "Walk of Shame"—the need to physically access the router to perform a factory reset because of a simple configuration typo or logic error.
+* **Automatic Rollback:** If your management connection is interrupted, RouterOS rolls back all changes made during the Safe Mode session.
+* **Prevents Lockouts:** Eliminates the need for physical access due to configuration errors.
 
 ### Safe Mode Workflow
 
-1. **Enter Safe Mode:** Before initiating any high-risk changes, click the **Safe Mode** button at the top left of Winbox (or press `CTRL + X`).
-2. **Apply Changes:** Execute updates (VLAN IDs, bridge filtering, firewall).
-3. **Verify Access:** Confirm connectivity to servers and the internet.
-4. **Commit Changes:** Click the **Safe Mode** button again to toggle it off and save permanently.
+1. **Enter Safe Mode** (`CTRL + X`)
+2. **Apply Changes**
+3. **Verify Access**
+4. **Exit Safe Mode** to commit
+
 ---
 
 ## Key Configuration Snippets
 
-### 1. Global Bridge & MTU Hardening
+### 1. Global Bridge Configuration
 
 ```routeros
-# Set Jumbo Frames for the Bridge and Storage Ports
-/interface bridge set bridge l2mtu=9000
-/interface ethernet set [find where name~"ether[4-8]"] l2mtu=9000
+/interface bridge
+set bridge protocol-mode=none
 ```
 
 ### 2. Create the Native Sink VLAN
@@ -129,10 +130,15 @@ set [find interface=ether8] pvid=99 ingress-filtering=yes
 
 ## Best Practices
 
-1. **VLAN Hopping Mitigation:** By using PVID 999 as the **Native Sink** on `ether2` and `ether4`, "Double Tagging" attacks are neutralized at the switch chip level.
-2. **Storage Performance (VLAN 60) & Jumbo Frames:** To maximize Proxmox HA performance, we use Jumbo Frames (MTU 9000).
-  - Standard frames (1,500 bytes) require the CPU to process 6x more headers than a 9,000-byte Jumbo Frame.
-  - This reduces CPU overhead and increases effective throughput during disk replication and VM migrations.
-  - Note: Ensure your Proxmox Linux Bridges (vmbr0) and storage interfaces are also set to MTU 9000 to match the MikroTik.
-3. **Proxmox Management:** PVE Hosts on `ether5-8` utilize PVID 99. This allows the host OS to be managed "untagged," providing a simpler recovery path if the Proxmox bridge configuration is corrupted.
-4. **No Layer 3 for Sink:** Never assign an IP address to the NATIVE_SINK. The router must remain "deaf" to this VLAN.
+1. **VLAN Hopping Mitigation:**
+   Using PVID 999 as the **Native Sink** on trunk ports prevents double-tagging and VLAN hopping attacks.
+
+2. **Storage Network Design (VLAN 60):**
+   VLAN 60 is isolated to reduce contention and protect east–west storage traffic.
+   **Optional:** Jumbo Frames (MTU 9000) *can* be enabled on this VLAN if all devices support it end-to-end. However, on a 1 GbE network, this typically yields only **minor (5–10%) efficiency gains** and **no noticeable real-world performance improvement**. Simplicity and consistency are often preferable.
+
+3. **Proxmox Management Simplicity:**
+   PVE hosts use untagged management access (PVID 99) to provide a reliable recovery path if Proxmox bridge or VLAN configuration becomes corrupted.
+
+4. **No Layer 3 for Sink VLAN:**
+   Never assign an IP address to the **NATIVE_SINK (999)** VLAN. It must remain unroutable and non-participatory in Layer 3.
