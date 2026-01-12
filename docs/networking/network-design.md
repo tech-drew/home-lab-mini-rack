@@ -49,6 +49,96 @@ Following the **CIS (Center for Internet Security) Critical Security Controls**,
 
 ---
 
+## Wireless Access Design (CAPsMAN)
+
+Wireless networking in this environment is implemented as a **Layer 2 access extension** of the existing VLAN architecture. All wireless policy enforcement, segmentation, and security controls are inherited directly from the wired network design. No wireless-specific trust zones or routing exceptions are introduced.
+
+Wireless access points are centrally managed by **CAPsMAN** running on the RB5009. The APs themselves do not perform routing, NAT, or firewall functions.
+
+---
+
+### Wireless Design Principles
+
+* **Single Source of Truth:** VLAN definitions, trust boundaries, and firewall policy are defined once and enforced consistently across wired and wireless access.
+* **No Wireless-Only VLANs:** All SSIDs map directly to pre-existing VLANs.
+* **Centralized Control Plane:** CAPsMAN provides unified SSID configuration, security profiles, and radio management.
+* **Infrastructure Isolation:** AP management traffic is isolated from client traffic using VLAN separation.
+* **Zero Trust by Default:** Wireless clients are treated identically to wired clients within the same VLAN.
+
+**Note:** MikroTik wireless requires additional setup and tuning to achieve smooth roaming and consistent behavior across multiple access points. For now, the wireless network is implemented to provide reliable connectivity, proper network separation, and centralized management. More advanced wireless optimizations will be added and documented later as the environment matures.
+
+---
+
+### SSID to VLAN Mapping
+
+| SSID Name    | VLAN ID | VLAN Name | Purpose                                |
+| ------------ | ------: | --------- | -------------------------------------- |
+| HOME-TRUSTED |      20 | TRUSTED   | Primary user devices (laptops, phones) |
+| HOME-GUEST   |      30 | GUEST     | Guest access (WAN only)                |
+| HOME-IOT     |      40 | IOT       | IoT devices and embedded systems       |
+
+All SSIDs apply **802.1Q VLAN tagging at the AP**, ensuring traffic is properly segmented before entering the wired network.
+
+---
+
+### Access Point Management & Control Plane
+
+* AP management interfaces reside exclusively in **VLAN 99 (MGMT)**.
+* CAPsMAN control traffic operates entirely within the MGMT VLAN.
+* APs are not reachable from Guest (30) or IoT (40) VLANs.
+* Only Trusted (20) and MGMT (99) devices may administer wireless infrastructure.
+
+This ensures that compromise of a wireless client does not provide a path to infrastructure management.
+
+---
+
+### Wired Uplink and Trunk Configuration
+
+Access points connect to the RB5009 using **802.1Q trunk ports** with strict ingress filtering:
+
+* **Tagged VLANs:** 10, 20, 30, 40, 99  
+  *(VLANs 50 and 60 are intentionally omitted, as they are not accessible via wireless.)*
+* **Native VLAN (PVID):** 999 (NATIVE_SINK)
+* **Untagged traffic:** Dropped via the Native Sink VLAN
+* **Ingress Filtering:** Enabled (only VLANs tagged on this port are allowed; all others are dropped)
+
+This design prevents:
+
+* VLAN hopping
+* Double-tagging attacks
+* Accidental untagged client bridging
+
+---
+
+### Security Considerations
+
+* Wireless clients inherit **identical firewall rules** as wired clients within the same VLAN.
+* Guest and IoT SSIDs are fully isolated and restricted to WAN access only.
+* No Layer 3 interface exists on the **NATIVE_SINK (999)** VLAN.
+* CAPsMAN configuration changes follow the same Safe Mode and rollback procedures as core router changes.
+
+---
+
+### Operational Scope
+
+The network design document intentionally excludes low-level RF and radio configuration details such as:
+
+* Channel selection
+* Transmit power tuning
+* Band steering
+* Roaming optimization
+* Regulatory domain settings
+
+These parameters are considered **operational implementation details** and are maintained within CAPsMAN configuration and RouterOS comments.
+
+---
+
+### Summary
+
+Wireless access in this homelab is a **first-class citizen of the network architecture**, not a parallel or exception-based system. By enforcing consistent VLAN tagging, centralized management, and strict isolation of infrastructure traffic, the wireless design aligns fully with enterprise networking and security best practices.
+
+---
+
 ## Physical Port Layout (RB5009)
 
 | Port          | Device          | Mode                       | Native VLAN (PVID) |
