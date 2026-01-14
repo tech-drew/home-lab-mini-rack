@@ -1,9 +1,14 @@
-# NAS Setup Documentation
+# Storage Setup Documentation
 
 ## Overview
 
-This NAS is used primarily for backing up Proxmox virtual machines, containers, and related infrastructure.  
-It runs **TrueNAS natively (bare metal)** and is designed for reliability, data integrity, and gradual expansion as storage needs grow.
+This project utilizes two NAS storage enclosures, each serving a distinct purpose within the infrastructure.
+
+Primary Backup NAS
+- The first NAS is dedicated to backing up Proxmox virtual machines, containers, and related infrastructure. It runs TrueNAS on bare metal and is designed to prioritize reliability, data integrity, and incremental expansion as storage requirements increase.
+
+High Availability NAS
+- The second NAS provides high-availability storage for Proxmox virtual machines, containers, and supporting infrastructure. It runs Proxmox on bare metal and is optimized specifically for high-availability workloads.
 
 ---
 
