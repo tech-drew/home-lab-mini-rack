@@ -27,7 +27,7 @@ The table defines the core network services and addressing for each VLAN. By res
 | **50** | BACKUP | 10.100.50.0/24 | **No** | **No** | **Static Only.** Backup NAS (TrueNAS). |
 | **60** | STORAGE | 10.100.60.0/24 | **No** | **No** | **Static Only.** HA Storage / Proxmox Backplane. |
 | **99** | MGMT | 10.100.99.0/24 | **No*** | **No** | **Static Only.** Router, Switches, APs, PVE Hosts. |
-| **999** | SINK | None | **No** | **No** | Dead-end for Untagged Trunk Traffic. |
+| **999** | SINK | None | **No** | **No** | (Native-Sink) Dead-end for Untagged Trunk Traffic. |
 
 > **Note on Management (VLAN 99):** While documented as **Static Only** for production reliability, a small temporary DHCP pool can be enabled during "staging" to provision new hardware before assigning static leases.
 
