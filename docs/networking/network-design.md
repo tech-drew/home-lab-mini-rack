@@ -1,8 +1,6 @@
-## Network Design Summary
+# Network Design Summary: Secure & Scalable MikroTik RB5009
 
-This guide describes how to configure an **enterprise-style, secure, and scalable VLAN design** on a MikroTik RB5009 using RouterOS.
-
-Following the **CIS (Center for Internet Security) Critical Security Controls**, VLAN 1 is strictly disabled for all data and management paths. All trunk ports utilize a **Native Sink VLAN (999)** as their native PVID. This ensures that any untagged frames entering a trunk port are "sunk" into a non-routable VLAN, effectively neutralizing lateral movement and VLAN hopping exploits.
+This guide describes the configuration of a secure, high-performance VLAN architecture on a MikroTik RB5009. It follows **CIS Critical Security Controls** by disabling VLAN 1 and utilizing a **Native Sink (999)** to neutralize untagged traffic on exposed trunk ports.
 
 ---
 
@@ -10,42 +8,91 @@ Following the **CIS (Center for Internet Security) Critical Security Controls**,
 
 * **Create an enterprise-style secure and scalable VLAN Design**
 * **Follow Enterprise Networking and CyberSecurity Best Practices**
-* **Learn how to be a better tech professional**
+* **Maximize storage backplane performance with Jumbo Frames**
+* **Implement "Early Warning" physical intrusion detection**
+* **Balance Security (Native Sink) with Availability (Management PVIDs)**
 
 ---
 
-## Network Design Summary
+## VLANs
 
-### VLAN Plan
+The table defines the core network services and addressing for each VLAN. By restricting DHCP and DNS on infrastructure-critical VLANs (50, 60, 99) we reduce attack surface on critical VLANs.
 
-| VLAN ID | Name        | Subnet         | Purpose                             |
-| ------- | ----------- | -------------- | ----------------------------------- |
-| 10      | SERVERS     | 10.100.10.0/24 | VMs and containers only             |
-| 20      | TRUSTED     | 10.100.20.0/24 | Admin devices, Laptops, Phones      |
-| 30      | GUEST       | 10.100.30.0/24 | Guest Wi-Fi                         |
-| 40      | IOT         | 10.100.40.0/24 | IoT devices, printers, cameras      |
-| 50      | BACKUP      | 10.100.50.0/24 | Backup NAS (TrueNAS)                |
-| 60      | STORAGE     | 10.100.60.0/24 | Proxmox Storage / Cluster Heartbeat |
-| 99      | MGMT        | 10.100.99.0/24 | Router, Switches, APs, PVE Hosts    |
-| 999     | NATIVE_SINK | None           | Dead-end for Untagged Trunk Traffic |
+| VLAN ID | Name | Subnet | DHCP | DNS | Purpose / Service Logic |
+| --- | --- | --- | --- | --- | --- |
+| **10** | SERVERS | 10.100.10.0/24 | **Yes** | **Yes** | VMs and containers only. |
+| **20** | TRUSTED | 10.100.20.0/24 | **Yes** | **Yes** | Trusted devices (Admin laptops, Phones). |
+| **30** | GUEST | 10.100.30.0/24 | **Yes** | **Yes** | Isolated visitors; WAN access only. |
+| **40** | IOT | 10.100.40.0/24 | **Yes** | **Yes** | IoT devices, printers, cameras. |
+| **50** | BACKUP | 10.100.50.0/24 | **No** | **No** | **Static Only.** Backup NAS (TrueNAS). |
+| **60** | STORAGE | 10.100.60.0/24 | **No** | **No** | **Static Only.** HA Storage / Proxmox Backplane. |
+| **99** | MGMT | 10.100.99.0/24 | **No*** | **No** | **Static Only.** Router, Switches, APs, PVE Hosts. |
+| **999** | SINK | None | **No** | **No** | Dead-end for Untagged Trunk Traffic. |
+
+> **Note on Management (VLAN 99):** While documented as **Static Only** for production reliability, a small temporary DHCP pool can be enabled during "staging" to provision new hardware before assigning static leases.
 
 ---
 
-## VLAN Access Control Summary
+## Architectural Rationale: Mixed MTU & Traffic Flow
 
-**VLAN 10 (Servers)** hosts application workloads. Accessible only from Trusted (20) and MGMT (99).
+This design utilizes a **Mixed MTU environment** to balance high-performance infrastructure with universal client compatibility. The strategy is built on the distinction between how data moves within the cluster versus how it moves to the user.
 
-**VLAN 20 (Trusted)** is the primary admin zone. Full access to Servers (10), Storage (60), and MGMT (99).
+### 1. East-West Traffic (Inter-Host Storage)
 
-**VLAN 30 (Guest) and VLAN 40 (IoT)** are isolated with WAN access only. No internal lateral movement.
+* **Direction:** Sideways movement between Proxmox hosts (e.g., Host A to Host B).
+* **MTU:** Native **9000 (Jumbo Frames)**.
+* **Purpose:** High-volume operations including **Storage Replication, ZFS Send/Receive, and Live VM Migrations**.
+* **The Efficiency Advantage:** Moving 9,000 bytes of data in a single frame significantly reduces the ratio of overhead to actual data.
 
-**VLAN 50 (Backup)** is restricted to authorized backup initiators within VLAN 10 (Servers).
+#### **Efficiency Comparison: Moving 9,000 Bytes of Data**
 
-**VLAN 60 (Storage)** is a high-priority, dedicated segment for **Proxmox HA storage, replication, and migration traffic**. Access is restricted to Proxmox host address lists.
+| Metric | Standard MTU 1500 | Jumbo MTU 9000 | Difference |
+| --- | --- | --- | --- |
+| **Frames Required** | 6 | 1 | **83.3% Fewer Frames** |
+| **Total Header Overhead** | 228 Bytes | 38 Bytes | **190 Byte Savings** |
+| **CPU Interrupts** | 6 | 1 | **83.3% Lower Load** |
+| **Effective Payload** | 1,500 bytes/frame | 9,000 bytes/frame | **6x Data Density** |
 
-**VLAN 99 (Management)** is for infrastructure hardware. Not reachable from Guest or IoT.
+### 2. North-South Traffic (Client-to-Server)
 
-**VLAN 999 (NATIVE_SINK)** has no Layer 3 interface. It serves as a security catch-all for untagged traffic on trunk ports, ensuring unauthorized packets are discarded by the bridge.
+* **Direction:** Vertical movement from a user/client to a service (e.g., Laptop to VM).
+* **MTU:** Standard **1500**.
+* **Purpose:** General access, internet browsing, and management.
+* **The "Fragmentation Tax":** When a device in a 1500 MTU VLAN requests data from the 9000 MTU Storage VLAN, the RB5009 performs Layer 3 fragmentation.
+
+#### **Fragmentation Tax Analysis (Per 9,000 Byte Transaction)**
+
+| Operation | Logic | Result |
+| --- | --- | --- |
+| **Ingress** | Router receives 1x 9000-byte frame from Storage. | **1 Interrupt** |
+| **Translation** | Router CPU calculates 6x 1500-byte segments + new headers. | **CPU Overhead** |
+| **Egress** | Router transmits 6x 1500-byte frames to Client. | **6 Interrupts** |
+| **Total Impact** | Router processes **7 total interrupts** for one transaction. | **16.6% Higher Load** |
+
+### 3. Jumbo Frames: Pros and Cons
+
+While mathematically superior for throughput, Jumbo Frames require strict adherence to configuration standards to avoid network instability.
+
+| Pros | Cons |
+| --- | --- |
+| **Increased Throughput:** Higher data-to-header ratio maximizes bandwidth. | **End-to-End Requirement:** Every switch and NIC in the path must support MTU 9000 or packets will be dropped. |
+| **Lower CPU Overhead:** Fewer interrupts allow the host CPU to focus on VM workloads. | **Difficult Troubleshooting:** MTU mismatches often cause "zombie connections" (ping works, but large data transfers fail). |
+| **Reduced Latency:** Fewer packets mean less time spent in switch buffers and queues. | **Standardization Issues:** Some consumer gear or cheap NICs do not support frames larger than 1500 or 4000 bytes. |
+
+### 4. Security vs. Visibility (The Native Sink)
+
+This design prioritizes **Prevention** via the **NATIVE_SINK (VLAN 999)** rather than a "Honeypot" detection approach.
+
+* **The "Wall" Approach:** By sinking untagged traffic, an unauthorized device gains zero network footprint—no IP, no gateway, and no internet access.
+* **Visibility via Logging:** Unauthorized access attempts are captured at the hardware level via **RouterOS Logging**. This provides "Early Warning" detection of physical intrusions without expanding the network's attack surface.
+
+---
+
+### **Summary of Benefits**
+
+* **Maximum Performance:** Storage replication (East-West) runs at near-theoretical wire speed.
+* **Maximum Compatibility:** Users (North-South) access services via standard 1500 MTU with no special configuration.
+* **Maximum Security:** Unauthorized ports are non-functional "dead ends" by default.
 
 ---
 
@@ -137,17 +184,17 @@ These parameters are considered **operational implementation details** and are m
 
 Wireless access in this homelab is a **first-class citizen of the network architecture**, not a parallel or exception-based system. By enforcing consistent VLAN tagging, centralized management, and strict isolation of infrastructure traffic, the wireless design aligns fully with enterprise networking and security best practices.
 
----
-
 ## Physical Port Layout (RB5009)
 
-| Port          | Device          | Mode                       | Native VLAN (PVID) |
-| ------------- | --------------- | -------------------------- | ------------------ |
-| ether1        | ISP Modem       | WAN                        | N/A                |
-| ether2        | CAP ax AP       | Trunk (10, 20, 30, 40, 99) | 999 (NATIVE_SINK)  |
-| ether3        | Spare/Admin     | Access                     | 99 (MGMT)          |
-| ether4        | Admin/Wired PC  | Trunk (20, 60, 99)         | 999 (NATIVE_SINK)  |
-| ether5–ether8 | Proxmox Cluster | Hybrid Trunk (10, 60)      | 99 (MGMT)          |
+Ports are categorized by **Risk Profile**. Exposed ports (APs) are "Sunk," while internal infrastructure ports (NAS/Proxmox) use Management or Data PVIDs for fail-safe access.
+
+| Port | Device | Mode | Native VLAN (PVID) |
+| --- | --- | --- | --- |
+| ether1 | ISP Modem | WAN | N/A |
+| ether2 | CAP ax AP | Security Trunk | 999 (NATIVE_SINK) |
+| **ether3** | Backup NAS | Access (VLAN 50) | 50 (BACKUP) |
+| **ether4** | HA Storage | Access (VLAN 60) | 60 (STORAGE) |
+| ether5–ether8 | Proxmox Cluster | Infrastructure Trunk | 99 (MGMT) |
 
 ---
 
@@ -181,54 +228,45 @@ Safe Mode acts as a stateful "Undo" button for your router’s configuration. Wh
 
 ## Key Configuration Snippets
 
-### 1. Global Bridge Configuration
+### 1. Global Bridge & MTU
 
 ```routeros
 /interface bridge
-set bridge protocol-mode=none
+set [find name=bridge] protocol-mode=none mtu=9000 l2mtu=9000 vlan-filtering=yes
+
 ```
 
-### 2. Create the Native Sink VLAN
+### 2. Early Warning Detection (Native Sink)
 
 ```routeros
-/interface bridge vlan
-add bridge=bridge vlan-ids=999 comment="NATIVE_SINK - Standard to drop untagged trunk traffic"
+/interface vlan
+add interface=bridge name=VLAN999_SINK vlan-id=999
+
+/ip firewall filter
+add action=log chain=input in-interface=VLAN999_SINK log=yes log-prefix="INTRUSION_ALERT" \
+    comment="Early Warning: Device detected on Sunk Port"
+
 ```
 
-### 3. Port Assignment & Ingress Filtering
+### 3. Port Assignment
 
 ```routeros
-/interface bridge port
+# Security Trunks (Sunk)
 set [find interface=ether2] pvid=999 frame-types=admit-only-vlan-tagged ingress-filtering=yes
-set [find interface=ether3] pvid=99 ingress-filtering=yes
-set [find interface=ether4] pvid=999 frame-types=admit-only-vlan-tagged ingress-filtering=yes
-set [find interface=ether5] pvid=99 ingress-filtering=yes
-set [find interface=ether6] pvid=99 ingress-filtering=yes
-set [find interface=ether7] pvid=99 ingress-filtering=yes
-set [find interface=ether8] pvid=99 ingress-filtering=yes
-```
 
-### 4. Enable Bridge VLAN Filtering
+# Dedicated Storage Access Ports (Untagged for the NAS)
+set [find interface=ether3] pvid=50 ingress-filtering=yes
+set [find interface=ether4] pvid=60 ingress-filtering=yes
 
-**Warning:** Only run this once all PVIDs and VLAN memberships are verified.
+# Infrastructure Trunks (Management Native)
+set [find interface=ether5,ether6,ether7,ether8] pvid=99 ingress-filtering=yes
 
-```routeros
-/interface bridge set bridge vlan-filtering=yes
 ```
 
 ---
 
 ## Best Practices
 
-1. **VLAN Hopping Mitigation:**
-   Using PVID 999 as the **Native Sink** on trunk ports prevents double-tagging and VLAN hopping attacks.
-
-2. **Storage Network Design (VLAN 60):**
-   VLAN 60 is isolated to reduce contention and protect east–west storage traffic.
-   **Optional:** Jumbo Frames (MTU 9000) *can* be enabled on this VLAN if all devices support it end-to-end. However, on a 1 GbE network, this typically yields only **minor (5–10%) efficiency gains** and **no noticeable real-world performance improvement**. Simplicity and consistency are often preferable.
-
-3. **Proxmox Management Simplicity:**
-   PVE hosts use untagged management access (PVID 99) to provide a reliable recovery path if Proxmox bridge or VLAN configuration becomes corrupted.
-
-4. **No Layer 3 for Sink VLAN:**
-   Never assign an IP address to the **NATIVE_SINK (999)** VLAN. It must remain unroutable and non-participatory in Layer 3.
+1. **Risk-Based PVIDs:** Exposed ports use **VLAN 999** (Sunk). Internal storage/server ports use their native VLANs to ensure a recovery path if software tagging fails.
+2. **Storage Reliability:** ether3 and ether4 are set as access ports. This ensures your NAS units are reachable even if you haven't configured VLAN tagging on the TrueNAS/Storage OS side yet.
+3. **Fragmentation Awareness:** The RB5009 handles the 9000-to-1500 translation for users; the storage backplane remains at peak efficiency.
