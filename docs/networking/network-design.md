@@ -81,7 +81,7 @@ While mathematically superior for throughput, Jumbo Frames require strict adhere
 
 ### 4. Security vs. Visibility (The Native Sink)
 
-This design prioritizes **Prevention** via the **NATIVE_SINK (VLAN 999)** rather than a "Honeypot" detection approach.
+This design prioritizes **Prevention** via the **Native-Sink (VLAN 999)** rather than a "Honeypot" detection approach.
 
 * **The "Wall" Approach:** By sinking untagged traffic, an unauthorized device gains zero network footprint—no IP, no gateway, and no internet access.
 * **Visibility via Logging:** Unauthorized access attempts are captured at the hardware level via **RouterOS Logging**. This provides "Early Warning" detection of physical intrusions without expanding the network's attack surface.
@@ -145,7 +145,7 @@ Access points connect to the RB5009 using **802.1Q trunk ports** with strict ing
 
 * **Tagged VLANs:** 10, 20, 30, 40, 99  
   *(VLANs 50 and 60 are intentionally omitted, as they are not accessible via wireless.)*
-* **Native VLAN (PVID):** 999 (NATIVE_SINK)
+* **Native VLAN (PVID):** 999 (Native-Sink)
 * **Untagged traffic:** Dropped via the Native Sink VLAN
 * **Ingress Filtering:** Enabled (only VLANs tagged on this port are allowed; all others are dropped)
 
@@ -161,7 +161,7 @@ This design prevents:
 
 * Wireless clients inherit **identical firewall rules** as wired clients within the same VLAN.
 * Guest and IoT SSIDs are fully isolated and restricted to WAN access only.
-* No Layer 3 interface exists on the **NATIVE_SINK (999)** VLAN.
+* No Layer 3 interface exists on the **Native-Sink (999)** VLAN.
 * CAPsMAN configuration changes follow the same Safe Mode and rollback procedures as core router changes.
 
 ---
@@ -191,7 +191,7 @@ Ports are categorized by **Risk Profile**. Exposed ports (APs) are "Sunk," while
 | Port | Device | Mode | Native VLAN (PVID) |
 | --- | --- | --- | --- |
 | ether1 | ISP Modem | WAN | N/A |
-| ether2 | CAP ax AP | Security Trunk | 999 (NATIVE_SINK) |
+| ether2 | CAP ax AP | Security Trunk | 999 (Native-Sink) |
 | **ether3** | Backup NAS | Access (VLAN 50) | 50 (BACKUP) |
 | **ether4** | HA Storage | Access (VLAN 60) | 60 (STORAGE) |
 | ether5–ether8 | Proxmox Cluster | Infrastructure Trunk | 99 (MGMT) |
