@@ -1,6 +1,13 @@
 # Network Design Summary: Secure & Scalable MikroTik RB5009
 
-This guide describes the configuration of a secure, high-performance VLAN architecture on a MikroTik RB5009. It follows **CIS Critical Security Controls** by disabling VLAN 1 and utilizing a **Native Sink (999)** to neutralize untagged traffic on exposed trunk ports.
+This guide outlines the configuration of a **secure, high-performance VLAN architecture** on a MikroTik RB5009 router. The goal of this home lab setup is to **create a reasonable mirror of enterprise networking practices**, while acknowledging that certain enterprise-specific technologies such as **RADIUS authentication**, **native sinks**, and **tape libraries for backups** will not be used in this environment.
+
+### Key Considerations:
+- **RADIUS Authentication:** In an enterprise environment, RADIUS (802.1X) would typically be used to authenticate users and assign dynamic VLANs. However, **RADIUS is not practical in this home lab setup**, as many IoT devices, smart TVs, and consumer devices do not support it. Instead, this home lab uses **WiFi Multi-Passphrase** with VLAN mapping to provide secure segmentation while maintaining compatibility with these devices.
+- **Native Sink (VLAN 999):** A **Native Sink** is used on exposed trunk ports to neutralize untagged traffic, providing an early warning of unauthorized access attempts while ensuring that traffic without a valid VLAN tag is discarded.
+- **Tape Library for Backups:** While **enterprise tape backup systems** would be used in a larger network for data redundancy, this setup does not include tape libraries. Backup in this lab is handled by **a dedicated backup NAS** (TrueNAS) and **Proxmox clusters** to support high availability.
+
+While this design mirrors many best practices from enterprise networks, a few features have been **excluded from the scope** of this project, either due to practical constraints or because they are not essential for home-lab requirements.
 
 ---
 
@@ -9,8 +16,6 @@ This guide describes the configuration of a secure, high-performance VLAN archit
 * **Create an enterprise-style secure and scalable VLAN Design**
 * **Follow Enterprise Networking and CyberSecurity Best Practices**
 * **Maximize storage backplane performance with Jumbo Frames**
-* **Implement "Early Warning" physical intrusion detection**
-* **Balance Security (Native Sink) with Availability (Management PVIDs)**
 
 ---
 
@@ -27,7 +32,6 @@ The table defines the core network services and addressing for each VLAN. By res
 | **50** | BACKUP | 10.100.50.0/24 | **No** | **No** | **Static Only.** Backup NAS (TrueNAS). |
 | **60** | STORAGE | 10.100.60.0/24 | **No** | **No** | **Static Only.** HA Storage / Proxmox Backplane. |
 | **99** | MGMT | 10.100.99.0/24 | **No*** | **No** | **Static Only.** Router, Switches, APs, PVE Hosts. |
-| **999** | SINK | None | **No** | **No** | (Native-Sink) Dead-end for Untagged Trunk Traffic. |
 
 > **Note on Management (VLAN 99):** While documented as **Static Only** for production reliability, a small temporary DHCP pool can be enabled during "staging" to provision new hardware before assigning static leases.
 
@@ -79,20 +83,10 @@ While mathematically superior for throughput, Jumbo Frames require strict adhere
 | **Lower CPU Overhead:** Fewer interrupts allow the host CPU to focus on VM workloads. | **Difficult Troubleshooting:** MTU mismatches often cause "zombie connections" (ping works, but large data transfers fail). |
 | **Reduced Latency:** Fewer packets mean less time spent in switch buffers and queues. | **Standardization Issues:** Some consumer gear or cheap NICs do not support frames larger than 1500 or 4000 bytes. |
 
-### 4. Security vs. Visibility (The Native Sink)
-
-This design prioritizes **Prevention** via the **Native-Sink (VLAN 999)** rather than a "Honeypot" detection approach.
-
-* **The "Wall" Approach:** By sinking untagged traffic, an unauthorized device gains zero network footprint—no IP, no gateway, and no internet access.
-* **Visibility via Logging:** Unauthorized access attempts are captured at the hardware level via **RouterOS Logging**. This provides "Early Warning" detection of physical intrusions without expanding the network's attack surface.
-
----
-
 ### **Summary of Benefits**
 
 * **Maximum Performance:** Storage replication (East-West) runs at near-theoretical wire speed.
 * **Maximum Compatibility:** Users (North-South) access services via standard 1500 MTU with no special configuration.
-* **Maximum Security:** Unauthorized ports are non-functional "dead ends" by default.
 
 ---
 
@@ -104,27 +98,68 @@ Wireless access points are centrally managed by **CAPsMAN** running on the RB500
 
 ---
 
-### Wireless Design Principles
+## MikroTik WiFi Multi-Passphrase Configuration
 
-* **Single Source of Truth:** VLAN definitions, trust boundaries, and firewall policy are defined once and enforced consistently across wired and wireless access.
-* **No Wireless-Only VLANs:** All SSIDs map directly to pre-existing VLANs.
-* **Centralized Control Plane:** CAPsMAN provides unified SSID configuration, security profiles, and radio management.
-* **Infrastructure Isolation:** AP management traffic is isolated from client traffic using VLAN separation.
-* **Zero Trust by Default:** Wireless clients are treated identically to wired clients within the same VLAN.
+This network uses **MikroTik WiFi Multi-Passphrase (MPSK)** to provide secure, segmented wireless access in a home / lab environment without relying on 802.1X / RADIUS.  
+The goal is to create a **reasonable home-lab mirror of enterprise practices** while remaining practical for consumer and IoT devices.
 
-**Note:** MikroTik wireless requires additional setup and tuning to achieve smooth roaming and consistent behavior across multiple access points. For now, the wireless network is implemented to provide reliable connectivity, proper network separation, and centralized management. More advanced wireless optimizations will be added and documented later as the environment matures.
+### Overview
+
+A single SSID is used with **multiple passphrases**, each mapped to a specific VLAN.  
+This provides Layer-2 segmentation without requiring RADIUS, which many IoT devices do not support.  
+
+> Note: In an enterprise environment, RADIUS would be used to provide per-user authentication and dynamic VLAN assignment.  
+> In a home/lab environment, MPSK is a practical compromise to balance device compatibility and network segmentation.
+
+**Important:** WPA3 is **not currently supported** on MikroTik Multi-Passphrase groups.
 
 ---
 
-### SSID to VLAN Mapping
+### Passphrase → VLAN Mapping
 
-| SSID Name    | VLAN ID | VLAN Name | Purpose                                |
-| ------------ | ------: | --------- | -------------------------------------- |
-| HOME-TRUSTED |      20 | TRUSTED   | Primary user devices (laptops, phones) |
-| HOME-GUEST   |      30 | GUEST     | Guest access (WAN only)                |
-| HOME-IOT     |      40 | IOT       | IoT devices and embedded systems       |
+| Passphrase Group | VLAN ID | Isolation | Purpose |
+|-----------------|---------|-----------|---------|
+| Trusted Devices | VLAN 20 | Disabled | Laptops, phones, desktops |
+| Guest Access    | VLAN 30 | Enabled  | Temporary / untrusted clients |
+| IoT Devices     | VLAN 40 | Enabled  | TVs, smart devices, appliances |
 
-All SSIDs apply **802.1Q VLAN tagging at the AP**, ensuring traffic is properly segmented before entering the wired network.
+---
+
+### Isolation Behavior
+
+- **Isolation is enabled only where needed**
+- Prevents client-to-client communication *within the same VLAN*
+- Cross-VLAN communication is blocked unless explicitly allowed by firewall rules
+- Trusted devices can communicate freely for discovery and lab operations
+- Guests and IoT devices are contained to minimize risk
+
+---
+
+### Security Notes
+
+- VLAN assignment provides true Layer-2 separation
+- Firewall rules control inter-VLAN access
+- Compromise of one passphrase does not affect other networks
+- More secure than a single PSK for all clients
+- Compatible with devices that cannot authenticate via RADIUS
+
+---
+
+### Limitations
+
+- This home lab is designed as a **reasonable mirror of enterprise networks**, not a full enterprise deployment.  
+- RADIUS / 802.1X is not used because many IoT and consumer devices do not support it.  
+- WPA3 is **not currently supported** on MikroTik Multi-Passphrase groups.  
+- Wi-Fi setup and roaming may require careful tuning.  
+- Proper bridge VLAN filtering and trunk configuration is still required.
+
+---
+
+## Summary
+
+Using Multi-Passphrase with VLAN assignment offers a **clean, secure, and practical wireless setup** for home and lab environments.  
+It allows real-world device compatibility while providing meaningful segmentation, reflecting enterprise network design principles in a home-friendly way.
+
 
 ---
 
@@ -145,8 +180,6 @@ Access points connect to the RB5009 using **802.1Q trunk ports** with strict ing
 
 * **Tagged VLANs:** 10, 20, 30, 40, 99  
   *(VLANs 50 and 60 are intentionally omitted, as they are not accessible via wireless.)*
-* **Native VLAN (PVID):** 999 (Native-Sink)
-* **Untagged traffic:** Dropped via the Native Sink VLAN
 * **Ingress Filtering:** Enabled (only VLANs tagged on this port are allowed; all others are dropped)
 
 This design prevents:
@@ -161,7 +194,6 @@ This design prevents:
 
 * Wireless clients inherit **identical firewall rules** as wired clients within the same VLAN.
 * Guest and IoT SSIDs are fully isolated and restricted to WAN access only.
-* No Layer 3 interface exists on the **Native-Sink (999)** VLAN.
 * CAPsMAN configuration changes follow the same Safe Mode and rollback procedures as core router changes.
 
 ---
@@ -186,15 +218,13 @@ Wireless access in this homelab is a **first-class citizen of the network archit
 
 ## Physical Port Layout (RB5009)
 
-Ports are categorized by **Risk Profile**. Exposed ports (APs) are "Sunk," while internal infrastructure ports (NAS/Proxmox) use Management or Data PVIDs for fail-safe access.
-
 | Port | Device | Mode | Native VLAN (PVID) |
 | --- | --- | --- | --- |
 | ether1 | ISP Modem | WAN | N/A |
-| ether2 | CAP ax AP | Security Trunk | 999 (Native-Sink) |
+| ether2 | CAP ax AP | Trunk | WiFi |
 | **ether3** | Backup NAS | Access (VLAN 50) | 50 (BACKUP) |
 | **ether4** | HA Storage | Access (VLAN 60) | 60 (STORAGE) |
-| ether5–ether8 | Proxmox Cluster | Infrastructure Trunk | 99 (MGMT) |
+| ether5–ether8 | Proxmox Cluster | Trunk | 99 (MGMT) |
 
 ---
 
@@ -223,45 +253,6 @@ Safe Mode acts as a stateful "Undo" button for your router’s configuration. Wh
 2. **Apply Changes**
 3. **Verify Access**
 4. **Exit Safe Mode** to commit
-
----
-
-## Key Configuration Snippets
-
-### 1. Global Bridge & MTU
-
-```routeros
-/interface bridge
-set [find name=bridge] protocol-mode=none mtu=9000 l2mtu=9000 vlan-filtering=yes
-
-```
-
-### 2. Early Warning Detection (Native Sink)
-
-```routeros
-/interface vlan
-add interface=bridge name=VLAN999_SINK vlan-id=999
-
-/ip firewall filter
-add action=log chain=input in-interface=VLAN999_SINK log=yes log-prefix="INTRUSION_ALERT" \
-    comment="Early Warning: Device detected on Sunk Port"
-
-```
-
-### 3. Port Assignment
-
-```routeros
-# Security Trunks (Sunk)
-set [find interface=ether2] pvid=999 frame-types=admit-only-vlan-tagged ingress-filtering=yes
-
-# Dedicated Storage Access Ports (Untagged for the NAS)
-set [find interface=ether3] pvid=50 ingress-filtering=yes
-set [find interface=ether4] pvid=60 ingress-filtering=yes
-
-# Infrastructure Trunks (Management Native)
-set [find interface=ether5,ether6,ether7,ether8] pvid=99 ingress-filtering=yes
-
-```
 
 ---
 
