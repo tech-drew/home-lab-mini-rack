@@ -16,7 +16,7 @@ This infrastructure uses **two NAS enclosures**, each serving a distinct purpose
 
 ---
 
-## Backup NAS — 
+## Backup NAS
 
 ---
 
@@ -36,7 +36,7 @@ This infrastructure uses **two NAS enclosures**, each serving a distinct purpose
 
 ---
 
-## High-Availability NAS — Aoostar WTR Pro (Proxmox)
+## High-Availability NAS
 
 ---
 
