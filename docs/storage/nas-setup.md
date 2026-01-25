@@ -16,28 +16,7 @@ This infrastructure uses **two NAS enclosures**, each serving a distinct purpose
 
 ---
 
-## Backup NAS — Aoostar WTR Pro (TrueNAS)
-
-> **Important Note:** On the AMD Ryzen WTR Pro, the second SATA controller is integrated into the CPU/SoC. Passing the **entire second SATA controller** to a VM (e.g., TrueNAS) causes the host to lose CPU sensor access, throttling the CPU (~1.9 GHz). The **first SATA controller** can be passed through safely. This is a hardware limitation with no known fix.
-> **Recommendation:** Avoid full controller passthrough. Bare-metal use or individual drive passthrough is safe.
-
-### Hardware
-
-* **NVMe Slots:** 2
-* **3.5" HDD Bays:** 4
-* **Memory:** 32 GB DDR4 (ECC not used; acceptable for home lab)
-
-### Current Disk Usage
-
-**NVMe Slots**
-
-* Slot 1: TrueNAS OS boot device
-* Slot 2: Reserved for future expansion or cache
-
-**HDD Bays**
-
-* Bay 1 & 2: 2 × 3.5" HDDs in **RAID1 mirror** for backup storage
-* Bay 3 & 4: Empty (planned for future expansion)
+## Backup NAS — 
 
 ---
 
@@ -59,26 +38,8 @@ This infrastructure uses **two NAS enclosures**, each serving a distinct purpose
 
 ## High-Availability NAS — Aoostar WTR Pro (Proxmox)
 
-> **Note:** Same SATA passthrough limitation applies. Avoid passing through the second SATA controller to a VM.
-
-### Hardware
-
-* **NVMe Slots:** 2
-* **3.5" HDD Bays:** 4
-* **Memory:** 32 GB DDR4 (ECC not used)
-
-### Current Disk Usage
-
-**NVMe Slots**
-
-* Slots 1 & 2: 2 × 2 TB Samsung 980 Pro SSDs in a single RAID1 mirror pool for HA storage
-
-**HDD Bays**
-
-* Bay 1: SATA SSD for Proxmox boot
-* Bays 2–4: Empty (planned for expansion)
-
 ---
+
 ### Storage Configuration
 
 - **Boot Device:** Dedicated SATA SSD for Proxmox OS  
