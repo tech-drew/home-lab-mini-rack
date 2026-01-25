@@ -131,57 +131,13 @@ Primary long-term goals:
 
 ## Future Storage Architecture
 
-### Dedicated NAS for Backups
+I am looking to obtain two NAS units for different purposes:
 
-* **Target Model:** Aoostar WTR Pro
-* **Estimated Cost:** ~$400
-* **Link:** [Aoostar WTR Pro](https://aoostar.com/collections/nas-series/products/aoostar-wtr-pro-4-bay-90t-storage-amd-ryzen-7-5825u-nas-mini-pc-support-2-5-3-5-hdd-%E5%A4%8D%E5%88%B6)
+High Availability NAS: Ideally, this would be a low-power, small-sized device featuring an NVMe boot SSD and two 2TB NVMe or SATA SSDs. This setup would provide fast random read and write performance with low latency, making it ideal for high availability.
 
-**Purpose**
+Backup NAS: For the backup unit, I would prefer a low-power, small-sized device with an NVMe boot drive and two large-capacity HDDs, such as Western Digital Red Plus NAS drives, configured in RAID 1 for data redundancy.
 
-* Centralized backup destination for VMs, containers, and configuration data
-
-**Planned Configuration**
-
-* Start with **RAID1** using two drives
-* Leave remaining bays empty for expansion
-* Migrate to **RAID-Z1 or RAID-Z2** as storage needs increase
-
-This system will be isolated from production workloads to reduce risk and simplify backup and recovery.
-
----
-
-### NAS for Shared Storage & High Availability
-
-* **Target Model:** Aoostar WTR Pro
-* **Estimated Cost:** ~$400
-
-**Purpose**
-
-* Shared storage for Proxmox to enable live migration, HA, and clustered workloads
-
-**Design Rationale**
-
-* Separating backup and production storage reduces failure impact
-* Dual NAS design simplifies VLAN segmentation
-* Mirrors real-world infrastructure practices
-
-**Planned Configuration**
-
-* Initial **RAID1**
-* Expandable to **RAID-Z1 or RAID-Z2**
-
----
-
-### NAS Hard Drives
-
-* **Target Model:** Western Digital Red Plus
-
-**Notes**
-
-* Designed for NAS workloads and 24/7 operation
-* Drive size and quantity will be selected after real usage data is available
-* Reclaimed or mixed-capacity drives may be used initially to control costs
+I am open to using any equipment I can find at a reasonable price, with a strong focus on compact size, low power consumption, and reliable performance.
 
 ---
 
