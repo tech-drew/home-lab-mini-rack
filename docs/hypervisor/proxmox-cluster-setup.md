@@ -1,6 +1,58 @@
 # Proxmox Cluster Setup Guide
 
-This guide explains how to set up a **Proxmox VE cluster** for a homelab environment with multiple nodes. It covers creating the cluster, configuring host files, adding nodes, and checking cluster health.
+## ZFS Design Considerations for a 1 GbE–Limited Network
+
+Before diving into the cluster setup, it’s important to explain the filesystem choice. This Proxmox cluster is deployed in a home lab environment with a hard 1 GbE network limitation. Because network bandwidth is the primary bottleneck, the cluster must be configured to minimize the amount of data sent over the network. This is accomplished by using ZFS.
+
+**Note:** ZFS must be selected and configured during the initial Proxmox installation. Proxmox does not support converting an existing root filesystem (for example, LVM or ext4) to ZFS after installation. Changing to ZFS later would require reinstalling Proxmox and wiping the node. This design decision should be made before installing proxmox on the first cluster node.
+
+ZFS is a strong fit for this constraint for the following reasons:
+
+### Incremental, Block-Level Replication
+
+ZFS replication is snapshot-based and incremental, meaning it transfers only the blocks that have changed since the last snapshot.
+
+Example:
+
+- A 20 GB VM disk
+- Only 1–2 GB of data changed since the last snapshot
+
+In this scenario, ZFS replicates only the changed blocks, not the entire disk. This can reduce backup and HA-related network traffic by 90% or more compared to volume-based approaches such as LVM-thin, which often operate at the whole-volume level.
+
+This behavior is especially beneficial on a 1 GbE network, where full-disk transfers would quickly saturate available bandwidth.
+
+### Compression Before Network Transfer
+
+ZFS applies fast, transparent compression (typically LZ4) before data is written to disk or sent over the network.
+
+- VM disk data commonly compresses 1.5×–2×
+- Less data traverses the network
+- Work is shifted from the network (the bottleneck) to CPU, which is plentiful in this environment
+
+This results in faster replication, backups, and reduced network congestion during normal cluster operations.
+
+### ARC Caching Reduces Data Churn
+
+ZFS aggressively uses system RAM as an ARC (Adaptive Replacement Cache):
+
+- Frequently accessed (“hot”) data is served from memory
+- Fewer disk writes occur
+- Fewer blocks change between snapshots
+
+Smaller change sets between snapshots translate directly into smaller replication deltas, further reducing network traffic.
+
+### Summary
+
+ZFS does not increase network speed—it minimizes how much data must cross the network.
+
+In a Proxmox cluster constrained to 1 GbE:
+
+- Backups complete faster
+- Replication is less disruptive
+- HA-related storage traffic is more manageable
+
+For this home lab, ZFS is a deliberate choice to work *with* the network limitation rather than against it.
+
 
 ---
 
@@ -10,13 +62,13 @@ On the designated **master node** (e.g., `node1`), run:
 
 ```bash
 pvecm create homelab-cluster
-````
+```
 
 This command will:
 
-* Generate a **Corosync authentication key**.
-* Create the cluster configuration in `/etc/pve/corosync.conf`.
-* Start Corosync and enable the cluster filesystem.
+* Generate a **Corosync authentication key**
+* Create the cluster configuration in `/etc/pve/corosync.conf`
+* Start Corosync and enable the cluster filesystem
 
 After this step, your master node will be the first member of the cluster.
 
@@ -55,20 +107,14 @@ ff02::3 ip6-allhosts
 
 **Notes:**
 
-* Ensure that each node can **ping every other node by hostname**. Example:
-
-```bash
-ping node1.homelab.local
-ping node2.homelab.local
-```
-
-* Using a `.local` domain is common, but for larger homelabs, consider `.lab` or `.home` to avoid mDNS conflicts.
+* Ensure that each node can **ping every other node by hostname**
+* Using a `.local` domain is common, but for larger homelabs consider `.lab` or `.home` to avoid mDNS conflicts
 
 ---
 
 ## 3. Add Additional Nodes to the Cluster
 
-SSH into each **additional node** and run the `pvecm add` command to join the cluster. Use either the **master node hostname** or IP address.
+SSH into each **additional node** and run the `pvecm add` command to join the cluster.
 
 ```bash
 # Node 2
@@ -86,64 +132,82 @@ pvecm add node1.homelab.local
 
 **Notes:**
 
-* You will be prompted for the **root password** of the master node.
-* Make sure the **Proxmox web API port (8006)** is accessible from each node.
-* If DNS issues occur, use the IP of the master node instead:
+* You will be prompted for the **root password** of the master node
+* Ensure **port 8006** is reachable
+* If DNS issues occur, use the IP instead:
 
-```bash
-pvecm add 192.168.88.31
-```
+  ```bash
+  pvecm add 192.168.88.31
+  ```
 
 ---
 
 ## 4. Verify Cluster Health
 
-After adding all nodes, check the cluster status:
-
 ```bash
-# Show general cluster information
 pvecm status
-
-# List all nodes in the cluster
 pvecm nodes
-
-# Check the Proxmox cluster service
 systemctl status pve-cluster
 ```
-## 5. Setup Proxmox with the non-enterprise repo. 
 
-The enterprise repo requires a license. For the purpose of using a home-lab the enterprise features are not needed. But regardless it is strongly recommended to support the creatures of Proxmox.
+---
 
-The correct repos were setup by using the Proxmox PVE Post Install script found here. https://community-scripts.github.io/ProxmoxVE/scripts?id=post-pve-install
+## 5. Setup Proxmox with the Non-Enterprise Repo
 
-- The enterprise repos were disabled.
-- The PVE No Subscription Repo was enabled.
-- The test repos were disabled
-- High Availability was left enabled since this is a cluster. I don't know if I will use any high availability features at this time.
-- The notification to active a license was disabled.
+The enterprise repository requires a license. For a home lab, the enterprise features are not required, though it is strongly recommended to support the creators of Proxmox if possible.
+
+Repos were configured using the **Proxmox PVE Post Install Script**:
+[https://community-scripts.github.io/ProxmoxVE/scripts?id=post-pve-install](https://community-scripts.github.io/ProxmoxVE/scripts?id=post-pve-install)
+
+* Enterprise repo disabled
+* PVE No-Subscription repo enabled
+* Test repo disabled
+* High Availability left enabled (clustered environment)
+* License notification disabled
+
+---
 
 ## 6. Setup Proxmox Backups
 
-Proxmox allows you to automatically back up virtual machines and snapshots on a schedule you define. If you have a NAS (Network Attached Storage), Proxmox can be configured to back up to it. However, as of December 27, 2025, I do not have a NAS. For now, I am using **local backups**. I plan to set up a NAS in the future once I can afford one. Currently, **budget constraints** are preventing me from purchasing a NAS.
+Currently, no NAS is available due to budget constraints, so **local backups** are used.
 
-I followed this guide to set up my backups: [Proxmox Backup Setup Guide](https://www.youtube.com/watch?v=lFzWDJcRsqo).
+Guide followed:
+[Proxmox Backup Setup Guide](https://www.youtube.com/watch?v=lFzWDJcRsqo)
 
 ### Current Backup Settings
 
-- **Backup Schedule:** Daily at 00:00
-- **Retention Policy:** Keep 1 backup
+* **Schedule:** Daily at 00:00
+* **Retention:** Keep 1 backup
 
-**Note:** Each Dell Wyse 5070 Thin Client has a 256GB NVMe SSD. At the moment, this storage is used for Proxmox, virtual machines, containers, and backups. Due to the limited storage capacity, the retention policy is set to keep only one backup at a time. This setup is a "jury-rigged" solution using available equipment to build the homelab, and for now, I am making the best of the limited resources.
+Each Dell Wyse 5070 Thin Client has a **256 GB NVMe SSD**, which is shared by:
 
-## 7. Add ISOs to each node
+* Proxmox
+* VMs
+* Containers
+* Backups
 
-Here are the directions to add a ISO to a node locally. Best Practice is to use a NAS. If you don't have a NAS, you can add the ISO onto each node.
+This is a temporary, resource-constrained setup using available hardware.
 
-- Click on a Node>Local>Iso Images>Upload an Iso.
-- Kubuntu 24.0.3 will be used as a starter image. Ubuntu has a bunch of community support. However, I don't like gnome, so I will use Kubuntu so I have access to the KDE Plasma GUI whenever a GUI is necessary.
-- A lot of VM management can be done via SSH. So I don't expect to heavily rely on GUIs.
-## 8. Proxmox Hepler Scripts
+---
 
-The following website can be used to get a bunch of useful scripts to help automate proxmox work. In particular, I found the `pve post install` script to be very helpful.
+## 7. Add ISOs to Each Node
 
-https://community-scripts.github.io/ProxmoxVE/scripts
+Without shared storage, ISOs must be uploaded per-node.
+
+Steps:
+
+* Node → Local → ISO Images → Upload ISO
+* **Kubuntu 24.0.3** is used as the base image
+* Ubuntu ecosystem provides strong community support
+* KDE Plasma is preferred over GNOME
+* Most VM management is done via SSH
+
+---
+
+## 8. Proxmox Helper Scripts
+
+Helpful automation scripts can be found here:
+
+[https://community-scripts.github.io/ProxmoxVE/scripts](https://community-scripts.github.io/ProxmoxVE/scripts)
+
+The **Post PVE Install** script was especially useful for initial setup.
