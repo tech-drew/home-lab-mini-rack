@@ -1,58 +1,8 @@
 # Proxmox Cluster Setup Guide
 
-## ZFS Design Considerations for a 1 GbE–Limited Network
+## Note on Storage
 
-Before diving into the cluster setup, it’s important to explain the filesystem choice. This Proxmox cluster is deployed in a home lab environment with a hard 1 GbE network limitation. Because network bandwidth is the primary bottleneck, the cluster must be configured to minimize the amount of data sent over the network. This is accomplished by using ZFS.
-
-**Note:** ZFS must be selected and configured during the initial Proxmox installation. Proxmox does not support converting an existing root filesystem (for example, LVM or ext4) to ZFS after installation. Changing to ZFS later would require reinstalling Proxmox and wiping the node. This design decision should be made before installing proxmox on the first cluster node.
-
-ZFS is a strong fit for this constraint for the following reasons:
-
-### Incremental, Block-Level Replication
-
-ZFS replication is snapshot-based and incremental, meaning it transfers only the blocks that have changed since the last snapshot.
-
-Example:
-
-- A 20 GB VM disk
-- Only 1–2 GB of data changed since the last snapshot
-
-In this scenario, ZFS replicates only the changed blocks, not the entire disk. This can reduce backup and HA-related network traffic by 90% or more compared to volume-based approaches such as LVM-thin, which often operate at the whole-volume level.
-
-This behavior is especially beneficial on a 1 GbE network, where full-disk transfers would quickly saturate available bandwidth.
-
-### Compression Before Network Transfer
-
-ZFS applies fast, transparent compression (typically LZ4) before data is written to disk or sent over the network.
-
-- VM disk data commonly compresses 1.5×–2×
-- Less data traverses the network
-- Work is shifted from the network (the bottleneck) to CPU, which is plentiful in this environment
-
-This results in faster replication, backups, and reduced network congestion during normal cluster operations.
-
-### ARC Caching Reduces Data Churn
-
-ZFS aggressively uses system RAM as an ARC (Adaptive Replacement Cache):
-
-- Frequently accessed (“hot”) data is served from memory
-- Fewer disk writes occur
-- Fewer blocks change between snapshots
-
-Smaller change sets between snapshots translate directly into smaller replication deltas, further reducing network traffic.
-
-### Summary
-
-ZFS does not increase network speed—it minimizes how much data must cross the network.
-
-In a Proxmox cluster constrained to 1 GbE:
-
-- Backups complete faster
-- Replication is less disruptive
-- HA-related storage traffic is more manageable
-
-For this home lab, ZFS is a deliberate choice to work *with* the network limitation rather than against it.
-
+This Proxmox cluster uses **network-attached storage (NAS)** for VM and container disks. Detailed information about the storage setup, including ZFS configuration, replication, and pool design, can be found in the [NAS Setup / Storage Documentation](./storage.md).
 
 ---
 
