@@ -44,7 +44,6 @@ Updates will be added as the lab is built, configured, and iterated on.
 
 * **Model:** Dell Wyse 5070 Thin Client × 4
 * **Price:** ~$155 total (used / purchased 11/28/2025 on eBay)
-* **Link:** [eBay Wyse 5070](https://www.ebay.com/sch/i.html?_nkw=wyse+5070+thin+client&_sacat=0)
 
 **Upgrades**
 
@@ -63,7 +62,6 @@ Updates will be added as the lab is built, configured, and iterated on.
 * Full CPU load: 13–15 W
 
 **Notes**
-
 * Updating to the latest BIOS is recommended for stability.
 * These systems are reported to be reliable for 24/7 operation.
 * The Intel J5005 memory controller can efficiently address ~30 GB of RAM.
@@ -88,7 +86,6 @@ Updates will be added as the lab is built, configured, and iterated on.
 
 * **Model:** SK Hynix 256 GB M.2 2280 SATA SSD
 * **Price:** ~$74 total (used / purchased 12/13/2025 on eBay)
-* **Link:** [SK Hynix 256 GB M.2 SATA SSD](https://www.ebay.com/itm/388921986094)
 
 **Notes**
 
@@ -114,6 +111,8 @@ Updates will be added as the lab is built, configured, and iterated on.
 | Compute Nodes             | $155       |
 | Storage (4 × 256 GB SSDs) | $74        |
 | **Total**                 | **$229**   |
+
+**Note**: Due to the global PC parts shortage in 2026, it may not be possible to acquire comparable hardware at prices similar to those listed in this document. Many components were purchased prior to the shortage or were obtained through aggressive bargain hunting on the used market afterward. As a result, the costs documented here should be treated as historical rather than representative of current market conditions.
 
 ---
 
@@ -182,10 +181,5 @@ This project favors **learning through constraints**. Temporary or improvised so
 
 ---
 
-## References / Links
-
-* [Dell Wyse 5070 Thin Client](https://www.ebay.com/sch/i.html?_nkw=wyse+5070+thin+client)
-
----
 
 *This project is open-source and intended for educational purposes and home lab experimentation.*
