@@ -6,6 +6,19 @@ This Proxmox cluster uses **network-attached storage (NAS)** for VM and containe
 
 ---
 
+## 0. Networking Considerations
+
+Before creating the cluster, ensure your Proxmox nodes are configured for the VLAN-aware network as documented in [Proxmox Network Configuration](../networking/proxmox-network.md).
+
+* The network adapter used for all VLAN traffic is named **eth0** on each node.
+* The management IP for each node resides on VLAN 99. For example, `10.100.99.11` is the management IP for **node1**. Adjust for your node and VLAN.
+* This setup is necessary because the router ports only allow **tagged traffic**, and untagged frames are blocked.
+* Using a VLAN-aware bridge (`vmbr0`) ensures all VLANs (20, 30, 40, 99, etc.) are accessible on a single NIC, simplifying management and VM connectivity.
+
+> **Tip:** Always confirm your NIC names and VLAN IPs match the configuration described in `proxmox-network.md` before proceeding.
+
+---
+
 ## 1. Create the Cluster on the Master Node
 
 On the designated **master node** (e.g., `node1`), run:
@@ -40,13 +53,13 @@ Edit `/etc/hosts` on each node as follows:
 ```text
 127.0.0.1 localhost.localdomain localhost
 
-# Homelab nodes
-192.168.88.31 node1.homelab.local node1
-192.168.88.32 node2.homelab.local node2
-192.168.88.33 node3.homelab.local node3
-192.168.88.34 node4.homelab.local node4
+# Homelab nodes (replace with VLAN 99 IPs from your network config)
+10.100.99.11 node1.homelab.local node1
+10.100.99.12 node2.homelab.local node2
+10.100.99.13 node3.homelab.local node3
+10.100.99.14 node4.homelab.local node4
 
-# IPv6 configuration (recommended for IPv6-capable hosts)
+# IPv6 configuration (optional)
 ::1     ip6-localhost ip6-loopback
 fe00::0 ip6-localnet
 ff00::0 ip6-mcastprefix
@@ -59,6 +72,7 @@ ff02::3 ip6-allhosts
 
 * Ensure that each node can **ping every other node by hostname**
 * Using a `.local` domain is common, but for larger homelabs consider `.lab` or `.home` to avoid mDNS conflicts
+* IPs should correspond to the management VLAN (VLAN 99) defined in your network documentation.
 
 ---
 
@@ -84,10 +98,10 @@ pvecm add node1.homelab.local
 
 * You will be prompted for the **root password** of the master node
 * Ensure **port 8006** is reachable
-* If DNS issues occur, use the IP instead:
+* If DNS issues occur, use the management VLAN IP instead:
 
   ```bash
-  pvecm add 192.168.88.31
+  pvecm add 10.100.99.11
   ```
 
 ---
@@ -161,3 +175,9 @@ Helpful automation scripts can be found here:
 [https://community-scripts.github.io/ProxmoxVE/scripts](https://community-scripts.github.io/ProxmoxVE/scripts)
 
 The **Post PVE Install** script was especially useful for initial setup.
+
+---
+
+**Key takeaway:** Always verify that the network interface configuration on each node matches the VLAN-aware setup in [proxmox-network.md](../networking/proxmox-network.md). This ensures that all nodes can communicate over VLAN 99 for management and correctly handle tagged traffic for other VLANs.
+
+
