@@ -39,10 +39,10 @@ targetcli
 /> backstores/block create pve-iscsi /dev/zvol/vmdata/pve-iscsi
 /> iscsi/ create iqn.2026-02.com.example:pve-storage1
 /> iscsi/iqn.2026-02.com.example:pve-storage1/tpg1/luns create /backstores/block/pve-iscsi
-/> iscsi/iqn.2026-02.com.example:pve-storage1/tpg1/portals create 192.168.10.10
+/> iscsi/iqn.2026-02.com.example:pve-storage1/tpg1/portals create 10.100.60.10
 /> iscsi/iqn.2026-02.com.example:pve-storage1/tpg1/acls create iqn.2026-02.com.example:pve-node1
 /> saveconfig
-
+/> exit
 
 
 
