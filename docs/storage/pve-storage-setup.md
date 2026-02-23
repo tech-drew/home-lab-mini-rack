@@ -189,3 +189,7 @@ You have:
 * Configured access control for a Proxmox node
 
 The storage can now be added in **Datacenter → Storage → Add → iSCSI** within Proxmox.
+
+**Note:** This process was repeated for NVME SSDs in the NAS to create a second smaller but faster storage pool.
+
+
