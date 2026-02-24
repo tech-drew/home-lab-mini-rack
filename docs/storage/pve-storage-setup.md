@@ -50,11 +50,13 @@ it will work initially. However, the `/dev/sdX` identifiers are dynamically assi
 **Warning:** This will permanently erase all data on the selected disks.
 
 ```bash
-wipefs -a /dev/disk/by-id/ata-Example_SSD_1_1234567890
-wipefs -a /dev/disk/by-id/ata-Example_SSD_1_0987654321
+wipefs -a /dev/sda
+wipefs -a /dev/sdc
 ```
 
 This ensures no old filesystem or RAID metadata interferes with ZFS.
+
+**Note:** It is okay to wipe the disks using the dynamically assigned identifier even though step 3 will use the persistent disk IDs.
 
 ---
 
