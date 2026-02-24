@@ -62,19 +62,22 @@ This ensures no old filesystem or RAID metadata interferes with ZFS.
 
 ## 3. Create the ZFS Mirror Pool
 
-Create a mirrored ZFS pool named `vmdata` using the persistent disk IDs:
+Create a mirrored ZFS pool named `vmdata` using the persistent disk IDs and enable **LZ4 compression**:
 
 ```bash
-zpool create -o ashift=12 vmdata mirror \
-/dev/disk/by-id/ata-Example_SSD_1_1234567890 \
-/dev/disk/by-id/ata-Example_SSD_1_0987654321
+zpool create -o ashift=12 \
+  -O compression=lz4 \
+  vmdata mirror \
+  /dev/disk/by-id/ata-Example_SSD_1_1234567890 \
+  /dev/disk/by-id/ata-Example_SSD_1_0987654321
 ```
 
 ### Explanation of Options
 
 * `-o ashift=12` → Aligns ZFS to 4K sector drives for optimal performance.
-* `mirror` → In ZFS, a mirror is RAID1-style redundancy. Unlike traditional RAID1, ZFS integrates **end-to-end checksumming and self-healing**, so it can detect and repair silent data corruption at the filesystem level. Traditional RAID1 mirrors blocks but cannot detect corruption beyond disk ECC.
-* Disk IDs (`/dev/disk/by-id/...`) → Persistent identifiers tied to the physical disk, so the pool is safe across reboots or port changes.
+* `-O compression=lz4` → Enables LZ4 compression at the pool level. LZ4 is fast, efficient, and reduces storage usage for general workloads. All datasets and ZVOLs in this pool inherit this compression unless overridden.
+* `mirror` → In ZFS, a mirror provides RAID1-style redundancy. Unlike traditional RAID1, ZFS integrates end-to-end checksumming and self-healing, so it can detect and repair silent data corruption at the filesystem level. Traditional RAID1 mirrors blocks but cannot detect corruption beyond disk ECC.
+* Disk IDs (`/dev/disk/by-id/...`) → Persistent identifiers tied to the physical disk, ensuring the pool remains consistent across reboots or SATA port changes.
 
 ### Verify Pool Status
 
@@ -82,7 +85,7 @@ zpool create -o ashift=12 vmdata mirror \
 zpool status
 ```
 
-You should see the mirrored vdev online, with all disks healthy.
+You should see the mirrored vdev online, with all disks healthy and ready for use.
 
 ---
 
