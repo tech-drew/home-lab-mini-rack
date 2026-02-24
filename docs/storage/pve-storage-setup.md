@@ -4,19 +4,44 @@
 
 This guide walks through setting up a mirrored **ZFS pool** and exporting a ZVOL over **iSCSI** on Proxmox VE.
 
----
+## 1. List Available Disks (Using Persistent IDs)
 
-## 1. List Available Disks
-
-Use `lsblk` to identify available disks:
+Use the `/dev/disk/by-id/` directory to identify disks by serial number:
 
 ```bash
-lsblk
+ls -l /dev/disk/by-id/
 ```
 
-<img width="798" height="635" alt="image" src="https://github.com/user-attachments/assets/d0733c2e-7beb-4777-b35f-76eddaf4e36c" />
+Example output:
 
-Confirm the disks you plan to use (for example: `/dev/sda` and `/dev/sdc` are the drives I am using).
+```text
+ata-Example_SSD_1_1234567890
+ata-Example_SSD_1_0987654321
+ata-Example_SSD_1_1122334455
+```
+
+Next, cross-reference with `lsblk` to confirm size and type:
+
+```bash
+lsblk -o NAME,SIZE,MODEL
+```
+
+Example:
+
+```text
+sda   2T  Example SSD 1
+sdb   2T  Example SSD 1
+sdc   1T  Example SSD 1
+```
+Identify the disks you want to use for your ZFS pool. Using **persistent device IDs** from `/dev/disk/by-id/` ensures that ZFS references the correct disks, even if device names change after a reboot or if you move drives to different SATA ports.
+
+For example, if you use a command like:
+
+```bash
+zpool create -o ashift=12 vmdata mirror /dev/sda /dev/sdc
+```
+
+it will work initially. However, the `/dev/sdX` identifiers are dynamically assigned by Linux at boot. This means that after a reboot or if the drives are connected to different SATA ports, the same disks could be assigned new device names. For instance, a disk that was `/dev/sda` before reboot could appear as `/dev/sdd` afterward. Using `/dev/disk/by-id/...` prevents this problem and makes your pool creation safer and more reliable.
 
 ---
 
@@ -25,28 +50,37 @@ Confirm the disks you plan to use (for example: `/dev/sda` and `/dev/sdc` are th
 **Warning:** This will permanently erase all data on the selected disks.
 
 ```bash
-wipefs -a /dev/sda
-wipefs -a /dev/sdc
+wipefs -a /dev/disk/by-id/ata-Example_SSD_1_1234567890
+wipefs -a /dev/disk/by-id/ata-Example_SSD_1_0987654321
 ```
+
+This ensures no old filesystem or RAID metadata interferes with ZFS.
 
 ---
 
 ## 3. Create the ZFS Mirror Pool
 
-Create a mirrored ZFS pool named `vmdata`:
+Create a mirrored ZFS pool named `vmdata` using the persistent disk IDs:
 
 ```bash
-zpool create -o ashift=12 vmdata mirror /dev/sda /dev/sdc
+zpool create -o ashift=12 vmdata mirror \
+/dev/disk/by-id/ata-Example_SSD_1_1234567890 \
+/dev/disk/by-id/ata-Example_SSD_1_0987654321
 ```
 
-* `ashift=12` ensures proper alignment for 4K sector drives.
-* `mirror` creates RAID1-style redundancy.
+### Explanation of Options
+
+* `-o ashift=12` → Aligns ZFS to 4K sector drives for optimal performance.
+* `mirror` → In ZFS, a mirror is RAID1-style redundancy. Unlike traditional RAID1, ZFS integrates **end-to-end checksumming and self-healing**, so it can detect and repair silent data corruption at the filesystem level. Traditional RAID1 mirrors blocks but cannot detect corruption beyond disk ECC.
+* Disk IDs (`/dev/disk/by-id/...`) → Persistent identifiers tied to the physical disk, so the pool is safe across reboots or port changes.
 
 ### Verify Pool Status
 
 ```bash
 zpool status
 ```
+
+You should see the mirrored vdev online, with all disks healthy.
 
 ---
 
