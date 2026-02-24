@@ -94,14 +94,12 @@ You should see the mirrored vdev online, with all disks healthy and ready for us
 Apply performance and optimization settings:
 
 ```bash
-zfs set compression=lz4 vmdata
 zfs set atime=off vmdata
 zfs set xattr=sa vmdata
 ```
 
 **Explanation:**
-
-* `compression=lz4` improves performance and saves space.
+https://www.youtube.com/watch?v=n41enLMUrgU
 * `atime=off` disables access time updates, reducing write overhead.
 * `xattr=sa` stores extended attributes more efficiently.
 
