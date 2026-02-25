@@ -265,8 +265,6 @@ targetcli
 /> iscsi/iqn.2026-02.com.example:pve-storage1/tpg1/luns create /backstores/block/pve-iscsi
 ```
 
-Here is your rewritten section with improved grammar, clarity, and technical precision:
-
 ---
 
 ### Add Portal
