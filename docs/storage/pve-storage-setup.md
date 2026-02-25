@@ -274,7 +274,7 @@ Here is your rewritten section with improved grammar, clarity, and technical pre
 ![Network Diagram](../images/network-diagram.png)
 
 ```
-/> iscsi/iqn.2026-02.com.example:pve-storage1/tpg1/portals create 10.100.60.10
+/> iscsi/iqn.2026-02.com.example:pve-storage1/tpg1/portals create 10.100.60.15
 ```
 
 **Note:**
@@ -301,7 +301,7 @@ iface vmbr0 inet manual
 # Storage interface (VLAN 60)
 auto vmbr0.60
 iface vmbr0.60 inet static
-        address 10.100.60.10/24
+        address 10.100.60.15/24
 
 # Management interface (VLAN 99)
 auto vmbr0.99
@@ -314,9 +314,10 @@ source /etc/network/interfaces.d/*
 
 With this configuration:
 
-* `10.100.60.10` is the storage IP used by iSCSI.
+* `10.100.60.15` is the storage IP used by iSCSI.
 * `10.100.99.15` is the management IP used for administrative access.
 * Both IP addresses belong to the same host but exist on separate VLAN interfaces for network isolation.
+* Both IP addresses are on different VLANs but share the same last octet, making it easier to identify the host across networks.
 
 This separation ensures that storage traffic remains isolated from management traffic while allowing the host to service both networks simultaneously.
 
