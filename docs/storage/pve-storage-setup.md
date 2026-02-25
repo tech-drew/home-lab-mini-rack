@@ -265,11 +265,60 @@ targetcli
 /> iscsi/iqn.2026-02.com.example:pve-storage1/tpg1/luns create /backstores/block/pve-iscsi
 ```
 
+Here is your rewritten section with improved grammar, clarity, and technical precision:
+
+---
+
 ### Add Portal
+
+![Network Diagram](../images/network-diagram.png)
 
 ```
 /> iscsi/iqn.2026-02.com.example:pve-storage1/tpg1/portals create 10.100.60.10
 ```
+
+**Note:**
+Before creating the portal, ensure that the host system is actually assigned the IP address specified in the command. The iSCSI service can only bind to an IP address that exists on one of the host’s network interfaces.
+
+In my network design, the `10.100.60.0/24` subnet is configured as a dedicated **Storage VLAN**. The storage host (`pve-storage1`) was made VLAN-aware and assigned an IP address in this subnet by editing `/etc/network/interfaces` as shown below.
+
+The `10.100.99.0/24` subnet is used as the **Management VLAN** and does not use DHCP.
+
+```bash
+auto lo
+iface lo inet loopback
+
+iface eth0 inet manual
+
+auto vmbr0
+iface vmbr0 inet manual
+        bridge-ports eth0
+        bridge-stp off
+        bridge-fd 0
+        bridge-vlan-aware yes
+        bridge-vids 2-4094
+
+# Storage interface (VLAN 60)
+auto vmbr0.60
+iface vmbr0.60 inet static
+        address 10.100.60.10/24
+
+# Management interface (VLAN 99)
+auto vmbr0.99
+iface vmbr0.99 inet static
+        address 10.100.99.15/24
+        gateway 10.100.99.1
+
+source /etc/network/interfaces.d/*
+```
+
+With this configuration:
+
+* `10.100.60.10` is the storage IP used by iSCSI.
+* `10.100.99.15` is the management IP used for administrative access.
+* Both IP addresses belong to the same host but exist on separate VLAN interfaces for network isolation.
+
+This separation ensures that storage traffic remains isolated from management traffic while allowing the host to service both networks simultaneously.
 
 ### Create ACL
 
