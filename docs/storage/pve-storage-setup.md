@@ -2,7 +2,9 @@
 
 **ZFS Mirror + iSCSI Target Configuration**
 
-This guide walks through setting up a mirrored **ZFS pool** and exporting a ZVOL over **iSCSI** on Proxmox VE.
+This guide walks through setting up a mirrored **ZFS pool** and exporting a ZVOL over **iSCSI** on Proxmox VE, including how to configure clean, enterprise-style disk names in `zpool status`.
+
+---
 
 ## 1. List Available Disks (Using Persistent IDs)
 
@@ -33,36 +35,67 @@ sda   2T  Example SSD 1
 sdb   2T  Example SSD 1
 sdc   1T  Example SSD 1
 ```
-Identify the disks you want to use for your ZFS pool. Using **persistent device IDs** from `/dev/disk/by-id/` ensures that ZFS references the correct disks, even if device names change after a reboot or if you move drives to different SATA ports.
 
-For example, if you use a command like:
-
-```bash
-zpool create -o ashift=12 vmdata mirror /dev/sda /dev/sdc
-```
-
-it will work initially. However, the `/dev/sdX` identifiers are dynamically assigned by Linux at boot. This means that after a reboot or if the drives are connected to different SATA ports, the same disks could be assigned new device names. For instance, a disk that was `/dev/sda` before reboot could appear as `/dev/sdd` afterward. Using `/dev/disk/by-id/...` prevents this problem and makes your pool creation safer and more reliable.
+Using **persistent device IDs** from `/dev/disk/by-id/` ensures ZFS references the correct disks even if Linux device names change after reboot.
 
 ---
 
-## 2. Wipe the Disks
+## 2. (Optional but Recommended) Configure Clean Disk Names
 
-**Warning:** This will permanently erase all data on the selected disks.
+By default, `zpool status` will show long disk IDs like:
+
+```
+ata-Example_SSD_1_1234567890
+```
+
+To make the output clean and enterprise-style (e.g., `disk1`, `disk2`), configure a ZFS vdev alias file.
+
+### 2.1 Create the VDEV Mapping File
+
+Create the configuration file:
+
+```bash
+nano /etc/zfs/vdev_id.conf
+```
+
+Add aliases using the same disk IDs from Step 1:
+
+```
+alias disk1 /dev/disk/by-id/ata-Example_SSD_1_1234567890
+alias disk2 /dev/disk/by-id/ata-Example_SSD_1_0987654321
+```
+
+Rules:
+
+* No spaces in alias names
+* Use underscores if needed
+* Names are cosmetic but persistent
+
+You may alternatively use descriptive names:
+
+```
+alias 2TB_SATA_SSD_disk1 /dev/disk/by-id/ata-Example_SSD_1_1234567890
+alias 2TB_SATA_SSD_disk2 /dev/disk/by-id/ata-Example_SSD_1_0987654321
+```
+
+---
+
+## 3. Wipe the Disks
+
+**Warning:** This permanently erases all data.
 
 ```bash
 wipefs -a /dev/sda
 wipefs -a /dev/sdc
 ```
 
-This ensures no old filesystem or RAID metadata interferes with ZFS.
-
-**Note:** It is okay to wipe the disks using the dynamically assigned identifier even though step 3 will use the persistent disk IDs.
+It is acceptable to wipe using `/dev/sdX` identifiers. The pool will be created using persistent IDs.
 
 ---
 
-## 3. Create the ZFS Mirror Pool
+## 4. Create the ZFS Mirror Pool
 
-Create a mirrored ZFS pool named `vmdata` using the persistent disk IDs and enable **LZ4 compression**:
+Create a mirrored ZFS pool named `vmdata` using the persistent disk IDs:
 
 ```bash
 zpool create -o ashift=12 \
@@ -74,55 +107,98 @@ zpool create -o ashift=12 \
 
 ### Explanation of Options
 
-* `-o ashift=12` → Aligns ZFS to 4K sector drives for optimal performance.
-* `-O compression=lz4` → Enables LZ4 compression at the pool level. LZ4 is fast, efficient, and reduces storage usage for general workloads. All datasets and ZVOLs in this pool inherit this compression unless overridden.
-* `mirror` → In ZFS, a mirror provides RAID1-style redundancy. Unlike traditional RAID1, ZFS integrates end-to-end checksumming and self-healing, so it can detect and repair silent data corruption at the filesystem level. Traditional RAID1 mirrors blocks but cannot detect corruption beyond disk ECC.
-* Disk IDs (`/dev/disk/by-id/...`) → Persistent identifiers tied to the physical disk, ensuring the pool remains consistent across reboots or SATA port changes.
+* `-o ashift=12` → Aligns to 4K sectors.
+* `-O compression=lz4` → Enables LZ4 compression.
+* `mirror` → RAID1-style redundancy with ZFS self-healing.
+* Persistent IDs ensure stability across reboots.
 
-### Verify Pool Status
+---
+
+## 5. Export and Re-Import to Activate Custom Names
+
+If you configured `/etc/zfs/vdev_id.conf`, export and re-import the pool to activate aliases.
+
+### Export:
+
+```bash
+zpool export vmdata
+```
+
+### Re-import (recommended explicit method):
+
+```bash
+zpool import -d /dev/disk/by-id -d /dev/disk/by-vdev vmdata
+```
+
+Or simply:
+
+```bash
+zpool import vmdata
+```
+
+ZFS will automatically generate:
+
+```
+/dev/disk/by-vdev/disk1
+/dev/disk/by-vdev/disk2
+```
+
+---
+
+## 6. Verify Clean Output
 
 ```bash
 zpool status
 ```
 
-You should see the mirrored vdev online, with all disks healthy and ready for use.
+You should now see:
+
+```
+mirror-0
+  disk1
+  disk2
+```
+
+Instead of long ATA identifiers.
+
+### Important Notes
+
+* This is cosmetic only.
+* It does not change pool structure.
+* It does not rewrite metadata.
+* It survives reboot.
+* Safe for iSCSI-backed storage.
+
+If `vdev_id.conf` is removed, ZFS will revert to full disk IDs.
 
 ---
 
-## 4. Configure Recommended ZFS Settings
-
-Apply performance and optimization settings:
+## 7. Configure Recommended ZFS Settings
 
 ```bash
 zfs set atime=off vmdata
 zfs set xattr=sa vmdata
 ```
 
-**Explanation:**
-https://www.youtube.com/watch?v=n41enLMUrgU
-* `atime=off` disables access time updates, reducing write overhead.
-* `xattr=sa` stores extended attributes more efficiently.
+* `atime=off` reduces write overhead.
+* `xattr=sa` improves extended attribute handling.
 
 ---
 
-## 5. Create a ZVOL for iSCSI
+## 8. Create a ZVOL for iSCSI
 
-Create a 1.5 TB block device (ZVOL) for use with iSCSI.
-
-This configuration uses two 2 TB SATA SSDs in a mirrored vdev. In ZFS, performance degrades significantly as pool utilization increases, particularly beyond ~80%. For this reason, it is best practice to keep at least 10–20% of the pool capacity free to reduce fragmentation and maintain write performance.
-
-To provide additional headroom for performance consistency and metadata overhead, approximately 25% of the pool capacity is intentionally left unallocated.
+Create a 1.5 TB block device:
 
 ```bash
 zfs create -V 1.5T -o volblocksize=16K vmdata/pve-iscsi
 ```
 
-* `-V 1.5T` creates a 1.5 TB ZFS volume (ZVOL), which presents as a block device at `/dev/zvol/vmdata/pve-iscsi`.
-* `volblocksize=16K` sets the ZVOL block size to 16 KB. This value should generally align with the expected workload. A 16 KB block size is commonly used for VM storage and works well for mixed workloads, though 8 KB may be preferable for database-heavy workloads, and larger sizes (e.g., 32–64 KB) may benefit sequential workloads.
+* `-V 1.5T` creates a ZVOL at `/dev/zvol/vmdata/pve-iscsi`
+* `volblocksize=16K` optimized for VM workloads
 
-Ensure the selected `volblocksize` matches your anticipated I/O profile, as it cannot be changed after the ZVOL is created.
+Leave 10–25% pool capacity free for performance stability.
 
-### Verify the ZVOL
+### Verify:
 
 ```bash
 zfs list
@@ -130,20 +206,17 @@ zfs list
 
 ---
 
-## 6. Configure Sync Behavior for iSCSI
+## 9. Configure Sync Behavior
 
 ```bash
 zfs set sync=standard vmdata/pve-iscsi
 ```
 
-* `sync=standard` ensures safe write behavior.
-* Avoid `sync=disabled` unless you fully understand the data-loss risks.
+Avoid `sync=disabled` unless you fully understand the risks.
 
 ---
 
-## 7. Install iSCSI Target Tools
-
-Install the Linux LIO target framework tools:
+## 10. Install iSCSI Target Tools
 
 ```bash
 apt install targetcli-fb
@@ -151,14 +224,14 @@ apt install targetcli-fb
 
 ---
 
-## 8. Load Required Kernel Modules
+## 11. Load Required Kernel Modules
 
 ```bash
 modprobe target_core_user
 modprobe iscsi_target_mod
 ```
 
-To verify:
+Verify:
 
 ```bash
 lsmod | grep iscsi
@@ -166,41 +239,39 @@ lsmod | grep iscsi
 
 ---
 
-## 9. Configure the iSCSI Target
+## 12. Configure the iSCSI Target
 
-Launch the configuration shell:
+Launch:
 
 ```bash
 targetcli
 ```
 
-### Create the Backstore
+### Create Backstore
 
 ```
 /> backstores/block create pve-iscsi /dev/zvol/vmdata/pve-iscsi
 ```
 
-### Create the iSCSI Target
+### Create Target
 
 ```
 /> iscsi/ create iqn.2026-02.com.example:pve-storage1
 ```
 
-### Create a LUN
+### Create LUN
 
 ```
 /> iscsi/iqn.2026-02.com.example:pve-storage1/tpg1/luns create /backstores/block/pve-iscsi
 ```
 
-### Add a Network Portal
-
-Replace with your storage server IP address:
+### Add Portal
 
 ```
 /> iscsi/iqn.2026-02.com.example:pve-storage1/tpg1/portals create 10.100.60.10
 ```
 
-### Create an ACL for a Proxmox Node
+### Create ACL
 
 ```
 /> iscsi/iqn.2026-02.com.example:pve-storage1/tpg1/acls create iqn.2026-02.com.example:pve-node1
@@ -220,13 +291,12 @@ Replace with your storage server IP address:
 You have:
 
 * Created a mirrored ZFS pool
-* Applied recommended performance tuning
-* Created a ZVOL for block storage
-* Exported the volume via iSCSI
-* Configured access control for a Proxmox node
+* Implemented clean enterprise disk naming
+* Applied recommended tuning
+* Created a ZVOL
+* Exported storage over iSCSI
+* Configured Proxmox node access
 
-The storage can now be added in **Datacenter → Storage → Add → iSCSI** within Proxmox.
+The storage can now be added in:
 
-**Note:** This process was repeated for NVME SSDs in the NAS to create a second smaller but faster storage pool.
-
-
+**Datacenter → Storage → Add → iSCSI** in Proxmox VE.
