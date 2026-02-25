@@ -23,6 +23,8 @@ While this design mirrors many best practices from enterprise networks, a few fe
 
 The table defines the core network services and addressing for each VLAN. By restricting DHCP and DNS on infrastructure-critical VLANs (50, 60, 99) we reduce attack surface on critical VLANs.
 
+![Network Diagram](../images/network-diagram.png)
+
 | VLAN ID | Name | Subnet | DHCP | DNS | Purpose / Service Logic |
 | --- | --- | --- | --- | --- | --- |
 | **10** | SERVERS | 10.100.10.0/24 | **Yes** | **Yes** | VMs and containers only. |
