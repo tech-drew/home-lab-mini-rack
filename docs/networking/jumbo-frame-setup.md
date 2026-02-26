@@ -17,10 +17,40 @@ To maintain network connectivity, configure jumbo frames in the following order:
    * Set MTU to 9000.
    * Update `/etc/network/interfaces` for persistence:
 
+**Note:** This example uses Dell Wyse 5070 thin clients, which have a single Ethernet port and no PCIe slots for expansion. If your hardware has additional NICs, the setup can be adapted accordingly. `eth0` refers to the physical Ethernet interface used by the node in this example. Adjust interface names and IP addresses as needed for your environment.
+
 ```bash
+auto lo
+iface lo inet loopback
+
+# Physical NIC
 auto eth0
 iface eth0 inet manual
     mtu 9000
+
+auto vmbr0
+iface vmbr0 inet manual
+    bridge-ports eth0
+    bridge-stp off
+    bridge-fd 0
+    bridge-vlan-aware yes
+    bridge-vids 2-4094
+
+# Storage interface so devices can access the network storage
+auto vmbr0.60
+iface vmbr0.60 inet static
+    address 10.100.60.11/24
+    mtu 9000
+    
+# Management interface for VLAN 99
+auto vmbr0.99
+iface vmbr0.99 inet static
+    address 10.100.99.11/24
+    gateway 10.100.99.1
+
+iface wlan0 inet manual
+
+source /etc/network/interfaces.d/*
 ```
 
 2. **Linux bridges (e.g., `vmbr0`)**
