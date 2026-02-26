@@ -27,7 +27,10 @@ iface lo inet loopback
 auto eth0
 iface eth0 inet manual
     mtu 9000
+    # This is the single physical NIC on the node. MTU 9000 enables jumbo frames.
+    # All virtual bridges and VLAN interfaces will use this NIC as the base.
 
+# Virtual bridge connecting VMs, VLANs, and storage
 auto vmbr0
 iface vmbr0 inet manual
     bridge-ports eth0
@@ -35,20 +38,26 @@ iface vmbr0 inet manual
     bridge-fd 0
     bridge-vlan-aware yes
     bridge-vids 2-4094
+    mtu 9000
+    # This bridge is VLAN-aware, allowing multiple VLANs over the same physical NIC.
+    # All VM and storage traffic passes through this bridge.
 
-# Storage interface so devices can access the network storage
+# Storage interface (VLAN 60)
 auto vmbr0.60
 iface vmbr0.60 inet static
     address 10.100.60.11/24
     mtu 9000
-    
-# Management interface for VLAN 99
+    # Dedicated interface for iSCSI or other network storage traffic.
+    # Keep storage traffic separate from management to improve performance and security.
+    # Only assign an IP if the host needs to access the storage network.
+
+# Management interface (VLAN 99)
 auto vmbr0.99
 iface vmbr0.99 inet static
     address 10.100.99.11/24
     gateway 10.100.99.1
-
-iface wlan0 inet manual
+    # This interface is used for Proxmox management, web GUI, SSH, and cluster communication.
+    # The web GUI and other admin services should only be accessible on this VLAN.
 
 source /etc/network/interfaces.d/*
 ```
