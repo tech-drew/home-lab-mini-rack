@@ -56,6 +56,9 @@ auto vmbr0.99
 iface vmbr0.99 inet static
     address 10.100.99.11/24
     gateway 10.100.99.1
+    mtu 1500
+    # Explicitly set MTU for the Management VLAN. 
+    # While this VLAN would normally inherit the bridge MTU, specifying 1500 improves clarity and documentation.
     # This interface is used for Proxmox management, web GUI, SSH, and cluster communication.
     # The web GUI and other admin services should only be accessible on this VLAN.
 
