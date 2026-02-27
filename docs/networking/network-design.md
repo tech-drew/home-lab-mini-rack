@@ -27,7 +27,7 @@ The table defines the core network services and addressing for each VLAN. By res
 
 | VLAN ID | Name | Subnet | DHCP | DNS | Purpose / Service Logic |
 | --- | --- | --- | --- | --- | --- |
-| **10** | SERVERS | 10.100.10.0/24 | **Yes** | **Yes** | VMs and containers only. |
+| **10** | SERVERS | 10.100.10.0/24 | **No** | **No** | VMs and containers only. |
 | **20** | TRUSTED | 10.100.20.0/24 | **Yes** | **Yes** | Trusted devices (Admin laptops, Phones). |
 | **30** | GUEST | 10.100.30.0/24 | **Yes** | **Yes** | Isolated visitors; WAN access only. |
 | **40** | IOT | 10.100.40.0/24 | **Yes** | **Yes** | IoT devices, printers, cameras. |
