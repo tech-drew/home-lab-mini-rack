@@ -17,7 +17,7 @@ Updates will be added as the lab is built, configured, and iterated on. Some doc
 
 # Hardware Components
 
-**Note:** This home lab is being assembled for approximately **$1,059 total out-of-pocket** by scavenging parts and repurposing hardware I already own or can acquire inexpensively.
+**Note:** This home lab is being assembled for approximately **$1,104 total out-of-pocket** by scavenging parts and repurposing hardware I already own or can acquire inexpensively.
 
 ---
 
