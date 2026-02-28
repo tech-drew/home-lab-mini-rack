@@ -1,162 +1,196 @@
-# Home Lab: Mini-rack
+# Home Lab: Mini-Rack
 
-This project documents the creation of a compact home lab setup, designed for **self-hosting resources** and **studying technology**. The goal is to build a fully functional mini-rack that supports networking, compute nodes, and power management in a compact and energy-efficient form factor.
+The primary objective of this home lab is to design and implement an environment that closely replicates enterprise IT infrastructure in both architecture and operational practices.
+
+In addition to this core objective, the project emphasizes several secondary priorities: minimizing physical footprint, optimizing energy efficiency, reducing noise levels, and maintaining strict cost control.
+
 
 ---
 
 ## Project Status: Work in Progress
 
-This repository documents the planning and design of my personal home lab project.
-It is currently a work in progress and includes design notes, hardware plans, and intended setup steps.
+This repository documents the planning and design of my personal home lab project. It is currently a work in progress and includes design notes, hardware plans, and intended setup steps.
 
-Updates will be added as the lab is built, configured, and iterated on.
-
----
-
-## Hardware Components
-
-**Notes:** This homelab is being assembled for approximately **$230** by scavenging parts and jury-rigging whatever hardware I already own or can acquire cheaply.
-
-### 1. Modem
-
-* **Model:** Arris Surfboard S33 (already owned)
+Updates will be added as the lab is built, configured, and iterated on. Some documentation may become out of date over time. Once everything is setup correctly and operational I will clean up documentation issues.
 
 ---
 
-### 2. Router
+# Hardware Components
 
-* **Model:** MikroTik RB5009 (already owned)
-* **Price:** ~$260 (typical retail)
-* **Note:** Extensive research went into selecting the networking equipment for this project. The reasoning and analysis behind choosing the MikroTik RB5009 and cAP ax can be found in the [Networking Equipment Analysis](docs/networking/networking-equipment-analysis.md).
+**Note:** This home lab is being assembled for approximately **$1,059 total out-of-pocket** by scavenging parts and repurposing hardware I already own or can acquire inexpensively.
 
 ---
 
-### 3. Access Points
+## 1. Modem
 
-* **Model:** MikroTik cAP ax (already owned)
-* **Price:** ~$120 each (typical retail)
-* **Link:** [MikroTik cAP ax](https://mikrotik.com/product/cap_ax)
-* **Note:** See the [Networking Equipment Analysis](docs/networking/networking-equipment-analysis.md) for design reasoning.
+* **Model:** Arris Surfboard S33
+* **Cost:** Already owned
 
 ---
 
-### 4. Compute Nodes
+## 2. Router
 
-* **Model:** Dell Wyse 5070 Thin Client × 4
-* **Price:** ~$155 total (used / purchased 11/28/2025 on eBay)
+* **Model:** MikroTik RB5009
+* **Cost:** Already owned (~$260 typical retail)
+* **Note:** Extensive research went into selecting the networking equipment. The reasoning behind choosing the RB5009 and cAP ax is documented in the *Networking Equipment Analysis*.
 
-**Upgrades**
+---
 
-* 32 GB DDR4 RAM (reused from previous projects)
-* 256 GB M.2 SATA SSDs (see storage section)
+## 3. Access Points
 
-**Storage Compatibility**
+* **Model:** MikroTik cAP ax
+* **Cost:** Already owned (~$120 each typical retail)
+* **Note:** See the *Networking Equipment Analysis* for design reasoning.
+
+---
+
+## 4. Proxmox Virtual Environment Compute Nodes
+
+* **Model:** Dell Wyse 5070 Thin Client (×4)
+* **Cost:** $155 total (used, purchased 11/28/2025 via eBay)
+
+### Upgrades
+
+* 32 GB DDR4 RAM (reused)
+* 256 GB M.2 SATA SSDs (see Storage section)
+
+### Storage Compatibility
 
 * NVMe SSDs are **not supported**
-* Requires M.2 SATA 2260 or 2280 SSDs
+* Requires M.2 SATA (2260 or 2280)
 
-**Power Draw**
+### Power Draw (per node)
 
 * Idle: ~5–6 W
 * Light load: 7–10 W
 * Full CPU load: 13–15 W
 
-**Notes**
-* Updating to the latest BIOS is recommended for stability.
-* These systems are reported to be reliable for 24/7 operation.
-* The Intel J5005 memory controller can efficiently address ~30 GB of RAM.
+### Notes
 
-**Memory Behavior**
+* Updating to the latest BIOS is recommended.
+* These systems are considered reliable for 24/7 operation.
+* The Intel J5005 memory controller can address ~30 GB of RAM.
 
-* **Linux:** Installing 32 GB results in ~30 GB usable. The remaining memory is unaddressed but does not affect stability.
-* **Windows:** To use 32 GB:
+### Memory Behavior
 
-  * Secure Boot must be disabled
-  * The following boot option must be added:
+**Linux:** Installing 32 GB results in ~30 GB usable. The remaining memory is unaddressable but does not affect stability.
 
-    ```
-    bcdedit /set {current} truncatememory 0x800000000
-    ```
-  * Windows will then report ~29.8 GB usable
-* The limitation is due to the CPU memory controller; memory rank configuration does not change this behavior.
+**Windows:** To utilize 32 GB:
+
+* Disable Secure Boot
+* Add the following boot option:
+
+```
+bcdedit /set {current} truncatememory 0x800000000
+```
+
+Windows will then report ~29.8 GB usable.
+
+The limitation is due to the CPU memory controller and is unaffected by memory rank configuration.
 
 ---
 
-### 5. Storage for Wyse Clients
+## 5. Storage for Wyse Clients
 
-* **Model:** SK Hynix 256 GB M.2 2280 SATA SSD
-* **Price:** ~$74 total (used / purchased 12/13/2025 on eBay)
+* **Model:** SK Hynix 256 GB M.2 2280 SATA SSD (×4)
+* **Cost:** $74 total (used, purchased 12/13/2025 via eBay)
 
-**Notes**
+### Notes
 
 * Fully compatible with the Wyse 5070 SATA-only M.2 slot
-* Used SSDs were considered but rejected due to wear concerns at minimal cost savings
-* Adequate for Linux, Proxmox, Docker, and lightweight Kubernetes workloads
-* SSD brand is not critical; selection was based on value and reliability
+* Used SSDs were rejected due to wear concerns
+* Adequate for Proxmox, Docker, and lightweight Kubernetes workloads
 * SMART monitoring will be used to track drive health
 
 ---
 
-### 6. UPS
+## 6. Proxmox Storage Node & Backup Server
 
-* **Model:** APC BN1500M2 (already owned)
-* **Notes:** A pure sine wave UPS is a future upgrade. This unit is being used temporarily to keep costs down.
+* **Model:** HP EliteDesk G4 SFF (×2)
+* **Cost:** $300 total (used, purchased 02/06/2026 via eBay)
+
+### CPU Configuration
+
+| System Role        | CPU                    | Cost |
+| ------------------ | ---------------------- | ---- |
+| Storage / NAS Node | i7-8700T (6C/12T, 35W) | $80  |
+| Backup Server      | i5-8500T (6C/6T, 35W)  | $45  |
+
+**Total CPU upgrade cost:** $125
+
+The systems originally shipped with i5-8500 (65W) CPUs, which were replaced with 35W T-series CPUs to reduce power consumption.
+
+### Storage Configuration
+
+* Boot drives: 256 GB SATA SSD (×2 total) — $50 total
+* Data drives: 2 TB SATA SSD (×4 total) — $400 total
+
+  * Two drives per system in a mirrored configuration for redundancy
+
+### Power Draw (per system)
+
+* Idle: ~18–25 W
+* Light load: 30–45 W
+* Full CPU load: 65–90 W
+
+*(Power draw is significantly higher than the Wyse thin clients due to desktop-class chipset, PSU overhead, and additional storage devices.)*
+
+### Notes
+
+* BIOS update recommended.
+* Reliable for 24/7 operation.
+* Each system includes:
+
+  * Two 3.5" drive bays
+  * Two NVMe slots on the motherboard
 
 ---
 
-### Total Cost of Purchased Materials
+## 7. UPS
 
-| Item                      | Cost (USD) |
-| ------------------------- | ---------- |
-| Compute Nodes             | $155       |
-| Storage (4 × 256 GB SSDs) | $74        |
-| **Total**                 | **$229**   |
-
-**Note**: Due to the global PC parts shortage in 2026, it may not be possible to acquire comparable hardware at prices similar to those listed in this document. Many components were purchased prior to the shortage or were obtained through aggressive bargain hunting on the used market afterward. As a result, the costs documented here should be treated as historical rather than representative of current market conditions.
+* **Model:** APC BN1500M2
+* **Cost:** Already owned
+* **Note:** A pure sine wave UPS is a future upgrade.
 
 ---
 
-## Future Expansion Plans
+# Total Cost of Purchased Materials
 
-This section outlines planned **storage and capability expansions**. These components represent the *ideal* end state of the lab. Due to cost constraints, some or all of this functionality may initially be implemented using **repurposed hardware or improvised solutions**, with dedicated hardware added later.
-
-Primary long-term goals:
-
-* Reliable **off-host backups**
-* **Highly available shared storage**
-* Continued experimentation with virtualization, containers, and networking
-
----
-
-## Future Storage Architecture
-
-I am looking to obtain two NAS units for different purposes:
-
-High Availability NAS: Ideally, this would be a low-power, small-sized device featuring an NVMe boot SSD and two 2TB NVMe or SATA SSDs. This setup would provide fast random read and write performance with low latency, making it ideal for high availability.
-
-Backup NAS: For the backup unit, I would prefer a low-power, small-sized device with an NVMe boot drive and two large-capacity HDDs, such as Western Digital Red Plus NAS drives, configured in RAID 1 for data redundancy.
-
-I am open to using any equipment I can find at a reasonable price, with a strong focus on compact size, low power consumption, and reliable performance.
+| Item                               | Cost (USD) |
+| ---------------------------------- | ---------- |
+| Dell Wyse 5070 Thin Clients (×4)   | $155       |
+| 256 GB M.2 SATA SSDs (×4)          | $74        |
+| HP EliteDesk G4 SFF Systems (×2)   | $300       |
+| CPU Upgrades (i7-8700T + i5-8500T) | $125       |
+| 256 GB SATA SSDs (×2)              | $50        |
+| 2 TB SATA SSDs (×4)                | $400       |
+| **Total**                          | **$1,104** |
 
 ---
 
-## Future Software & Lab Capabilities
+### Pricing Disclaimer
 
-As the lab matures, focus will shift from hardware assembly to **platform experimentation**:
+Due to the global PC parts shortage in 2026, comparable hardware may not be available at similar prices. Many components were purchased prior to the shortage or obtained through aggressive used-market sourcing. These figures should be considered historical and not reflective of current market conditions.
 
-### Virtualization & Containers
+---
+
+# Virtualization & Containers
 
 * Proxmox VE
 * Kubernetes (lightweight or full)
 * Docker / Docker Swarm
 
-### Self-Hosted Services
+---
+
+# Self-Hosted Services
 
 * Backup automation and snapshotting
 * Monitoring and logging stacks
 * Services such as Nextcloud, Home Assistant, and CI/CD tools
 
-### Networking Experiments
+---
+
+# Networking Experiments
 
 * VLAN segmentation using MikroTik RB5009
 * Firewall rules, VPNs, and routing labs
@@ -164,22 +198,25 @@ As the lab matures, focus will shift from hardware assembly to **platform experi
 
 ---
 
-## Trade-offs and Limitations
+# Trade-offs and Limitations
 
 This lab prioritizes **learning, efficiency, and cost control** over raw performance.
 
-* Thin clients offer limited CPU power but extremely low energy usage
+* Thin clients provide limited CPU power but extremely low energy usage
 * Storage capacity is intentionally conservative
-* Managed PDUs and enterprise-grade hardware are deferred due to cost
+* Enterprise-grade hardware is deferred due to cost
 * Incremental upgrades are preferred over large upfront investments
 
 ---
 
-## Design Philosophy
+# Design Philosophy
 
-This project favors **learning through constraints**. Temporary or improvised solutions are intentional and part of the experimentation process. Hardware and architecture decisions will evolve based on real-world experience rather than assumptions.
+This project embraces **learning through experimentation and iteration**. There are always unknowns in system design, and the most effective way to address them is through hands-on experience. The lab will evolve through cycles of building, testing, failure, refinement, and incremental improvement.
 
----
+Significant financial investment is intentionally deferred until practical experimentation clarifies real-world requirements. As a result, Version 1 of this home lab relies on **juryrigged and scavenged** hardware sourced from whatever is readily available. Juryrigging and scavenging components is part of the learning process and adds to the enjoyment of building the lab.
 
+**Note:** Given current budget constraints, the present implementation is considered successful. However, a future revision would incorporate two major changes.
 
-*This project is open-source and intended for educational purposes and home lab experimentation.*
+First, the networking infrastructure would be upgraded. A 1 GbE network represents a hard limitation, particularly for storage-heavy or distributed workloads. At a minimum, 2.5 GbE would be deployed throughout the environment as a budget-conscious improvement. Ideally, 10 GbE would serve as the baseline, with 25 GbE or higher considered if implementing distributed storage solutions such as Ceph, where replication traffic and cluster communication significantly increase bandwidth demands.
+
+Second, greater emphasis would be placed on hardware platforms that provide PCIe expansion for long-term flexibility. Compact systems with PCIe capability would allow for higher-speed networking, additional storage controllers, or other specialized hardware. However, these improvements would come at the cost of increased power consumption and heat generation, requiring careful evaluation of efficiency, thermals, and overall operating expense.
