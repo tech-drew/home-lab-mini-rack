@@ -22,3 +22,5 @@
 --- 
 
 Enter new entries here:
+
+**Note:** The Changelog will be updated in the future once I get the home lab to a stable state.
