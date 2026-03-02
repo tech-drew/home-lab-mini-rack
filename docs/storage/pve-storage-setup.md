@@ -308,7 +308,7 @@ iface vmbr0 inet manual
 # Storage interface (VLAN 60)
 auto vmbr0.60
 iface vmbr0.60 inet static
-    address 10.100.60.11/24
+    address 10.100.60.15/24
     mtu 9000
     # Dedicated interface for iSCSI or other network storage traffic.
     # Keep storage traffic separate from management to improve performance and security.
@@ -317,7 +317,7 @@ iface vmbr0.60 inet static
 # Management interface (VLAN 99)
 auto vmbr0.99
 iface vmbr0.99 inet static
-    address 10.100.99.11/24
+    address 10.100.99.15/24
     gateway 10.100.99.1
     mtu 1500
     # Explicitly set MTU for the Management VLAN. 
