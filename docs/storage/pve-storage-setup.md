@@ -107,10 +107,10 @@ zpool create -o ashift=12 \
 
 ### Explanation of Options
 
-* `-o ashift=12` → Aligns to 4K sectors.
-* `-O compression=lz4` → Enables LZ4 compression.
-* `mirror` → RAID1-style redundancy with ZFS self-healing.
-* Persistent IDs ensure stability across reboots.
+* `-o ashift=12` → Aligns to 4K sectors
+* `-O compression=lz4` → Enables LZ4 compression
+* `mirror` → RAID1-style redundancy with ZFS self-healing
+* Persistent IDs ensure stability across reboots
 
 ---
 
@@ -163,11 +163,11 @@ Instead of long ATA identifiers.
 
 ### Important Notes
 
-* This is cosmetic only.
-* It does not change pool structure.
-* It does not rewrite metadata.
-* It survives reboot.
-* Safe for iSCSI-backed storage.
+* This is cosmetic only
+* It does not change pool structure
+* It does not rewrite metadata
+* It survives reboot
+* Safe for iSCSI-backed storage
 
 If `vdev_id.conf` is removed, ZFS will revert to full disk IDs.
 
@@ -180,8 +180,8 @@ zfs set atime=off vmdata
 zfs set xattr=sa vmdata
 ```
 
-* `atime=off` reduces write overhead.
-* `xattr=sa` improves extended attribute handling.
+* `atime=off` reduces write overhead
+* `xattr=sa` improves extended attribute handling
 
 ---
 
@@ -256,31 +256,32 @@ targetcli
 ### Create Target
 
 ```
-/> iscsi/ create iqn.2026-02.com.example:pve-storage1
+/> iscsi/ create iqn.2026-03.homelab.local:pve-storage1
 ```
 
 ### Create LUN
 
 ```
-/> iscsi/iqn.2026-02.com.example:pve-storage1/tpg1/luns create /backstores/block/pve-iscsi
+/> iscsi/iqn.2026-03.homelab.local:pve-storage1/tpg1/luns create /backstores/block/pve-iscsi
 ```
 
 ---
 
 ### Add Portal
 
-![Network Diagram](../images/network-diagram.png)
-
 ```
-/> iscsi/iqn.2026-02.com.example:pve-storage1/tpg1/portals create 10.100.60.15
+/> iscsi/iqn.2026-03.homelab.local:pve-storage1/tpg1/portals create 10.100.60.15
 ```
 
 **Note:**
 Before creating the portal, ensure that the host system is actually assigned the IP address specified in the command. The iSCSI service can only bind to an IP address that exists on one of the host’s network interfaces.
 
-In my network design, the `10.100.60.0/24` subnet is configured as a dedicated **Storage VLAN**. The storage host (`pve-storage1`) was made VLAN-aware and assigned an IP address in this subnet by editing `/etc/network/interfaces` as shown below.
+In this network design:
 
-The `10.100.99.0/24` subnet is used as the **Management VLAN** and does not use DHCP.
+* `10.100.60.0/24` → **Storage VLAN**
+* `10.100.99.0/24` → **Management VLAN**
+
+The storage host (`pve-storage1`) is VLAN-aware and configured as follows:
 
 ```bash
 auto lo
@@ -330,18 +331,24 @@ source /etc/network/interfaces.d/*
 
 With this configuration:
 
-* `10.100.60.15` is the storage IP used by iSCSI.
-* `10.100.99.15` is the management IP used for administrative access.
-* Both IP addresses belong to the same host but exist on separate VLAN interfaces for network isolation.
-* Both IP addresses are on different VLANs but share the same last octet, making it easier to identify the host across networks.
+* `10.100.60.15` → Storage IP (iSCSI traffic)
+* `10.100.99.15` → Management IP (GUI, SSH, cluster)
+* Storage and management are isolated on separate VLANs
+* Matching last octet simplifies host identification
 
-This separation ensures that storage traffic remains isolated from management traffic while allowing the host to service both networks simultaneously.
+---
 
 ### Create ACL
 
+Example for `pve-node1.homelab.local`:
+
 ```
-/> iscsi/iqn.2026-02.com.example:pve-storage1/tpg1/acls create iqn.2026-02.com.example:pve-node1
+/> iscsi/iqn.2026-03.homelab.local:pve-storage1/tpg1/acls create iqn.2026-03.homelab.local:pve-node1
 ```
+
+(Repeat for each Proxmox node using its hostname.)
+
+---
 
 ### Save and Exit
 
@@ -349,20 +356,3 @@ This separation ensures that storage traffic remains isolated from management tr
 /> saveconfig
 /> exit
 ```
-
----
-
-# Summary
-
-You have:
-
-* Created a mirrored ZFS pool
-* Implemented clean enterprise disk naming
-* Applied recommended tuning
-* Created a ZVOL
-* Exported storage over iSCSI
-* Configured Proxmox node access
-
-The storage can now be added in:
-
-**Datacenter → Storage → Add → iSCSI** in Proxmox VE.
