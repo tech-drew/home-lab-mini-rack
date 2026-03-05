@@ -1,5 +1,3 @@
-<img width="2561" height="1601" alt="image" src="https://github.com/user-attachments/assets/44277501-fe95-42e0-b006-f7f99e3bcacb" /># Proxmox Network Storage Setup
-
 **ZFS Mirror + iSCSI Target Configuration**
 
 This guide walks through setting up a mirrored **ZFS pool** and exporting a ZVOL over **iSCSI** on Proxmox VE, including how to configure clean, enterprise-style disk names in `zpool status`.
