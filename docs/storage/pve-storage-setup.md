@@ -1,4 +1,4 @@
-# Proxmox Network Storage Setup
+<img width="2561" height="1601" alt="image" src="https://github.com/user-attachments/assets/44277501-fe95-42e0-b006-f7f99e3bcacb" /># Proxmox Network Storage Setup
 
 **ZFS Mirror + iSCSI Target Configuration**
 
@@ -241,47 +241,120 @@ lsmod | grep iscsi
 
 ## 12. Configure the iSCSI Target
 
-Launch:
+Launch the iSCSI configuration shell:
 
 ```bash
 targetcli
 ```
 
-### Create Backstore
+---
+
+# 12.1 Create Backstore
+
+Create a block backstore using the ZFS ZVOL created earlier.
 
 ```
 /> backstores/block create pve-iscsi /dev/zvol/vmdata/pve-iscsi
 ```
 
-### Create Target
+Verify the backstore:
+
+```
+/> ls /backstores/block
+```
+
+Expected output:
+
+```
+o- pve-iscsi
+```
+
+---
+
+# 12.2 Create the iSCSI Target
+
+Create the iSCSI target for the storage server.
 
 ```
 /> iscsi/ create iqn.2026-03.homelab.local:pve-storage1
 ```
 
-### Create LUN
+Verify:
+
+```
+/> ls /iscsi
+```
+
+Expected output:
+
+```
+o- iqn.2026-03.homelab.local:pve-storage1
+```
+
+---
+
+# 12.3 Create the LUN
+
+Expose the ZVOL to the target as a LUN.
 
 ```
 /> iscsi/iqn.2026-03.homelab.local:pve-storage1/tpg1/luns create /backstores/block/pve-iscsi
 ```
 
+Verify:
+
+```
+/> ls iscsi/iqn.2026-03.homelab.local:pve-storage1/tpg1/luns
+```
+
+Expected output:
+
+```
+o- lun0 -> /backstores/block/pve-iscsi
+```
+
 ---
 
-### Add Portal
+# 12.4 Add Portal (Storage Network)
+
+Bind the iSCSI target to the storage VLAN interface.
 
 ```
 /> iscsi/iqn.2026-03.homelab.local:pve-storage1/tpg1/portals create 10.100.60.15
 ```
 
-**Note:**
+Verify:
+
+```
+/> ls iscsi/iqn.2026-03.homelab.local:pve-storage1/tpg1/portals
+```
+
+Expected output:
+
+```
+o- 10.100.60.15:3260
+```
+
+---
+
+## Storage Network Configuration
+
 Before creating the portal, ensure that the host system is actually assigned the IP address specified in the command. The iSCSI service can only bind to an IP address that exists on one of the host’s network interfaces.
 
-In this network design:
+Network design:
 
-* `10.100.60.0/24` → **Storage VLAN**
-* `10.100.99.0/24` → **Management VLAN**
+| VLAN    | Network        | Purpose                 |
+| ------- | -------------- | ----------------------- |
+| VLAN 60 | 10.100.60.0/24 | Storage traffic (iSCSI) |
+| VLAN 99 | 10.100.99.0/24 | Management traffic      |
 
-The storage host (`pve-storage1`) is VLAN-aware and configured as follows:
+Storage server addresses:
+
+| Host         | Storage IP   | Management IP |
+| ------------ | ------------ | ------------- |
+| pve-storage1 | 10.100.60.15 | 10.100.99.15  |
+
+The storage host is configured with the following interfaces:
 
 ```bash
 auto lo
@@ -291,10 +364,8 @@ iface lo inet loopback
 auto eth0
 iface eth0 inet manual
     mtu 9000
-    # This is the single physical NIC on the node. MTU 9000 enables jumbo frames.
-    # All virtual bridges and VLAN interfaces will use this NIC as the base.
 
-# Virtual bridge connecting VMs, VLANs, and storage
+# VLAN-aware bridge
 auto vmbr0
 iface vmbr0 inet manual
     bridge-ports eth0
@@ -303,56 +374,153 @@ iface vmbr0 inet manual
     bridge-vlan-aware yes
     bridge-vids 2-4094
     mtu 9000
-    # This bridge is VLAN-aware, allowing multiple VLANs over the same physical NIC.
-    # All VM and storage traffic passes through this bridge.
 
-# Storage interface (VLAN 60)
+# Storage VLAN
 auto vmbr0.60
 iface vmbr0.60 inet static
     address 10.100.60.15/24
     mtu 9000
-    # Dedicated interface for iSCSI or other network storage traffic.
-    # Keep storage traffic separate from management to improve performance and security.
-    # Only assign an IP if the host needs to access the storage network.
 
-# Management interface (VLAN 99)
+# Management VLAN
 auto vmbr0.99
 iface vmbr0.99 inet static
     address 10.100.99.15/24
     gateway 10.100.99.1
     mtu 1500
-    # Explicitly set MTU for the Management VLAN. 
-    # While this VLAN would normally inherit the bridge MTU, specifying 1500 improves clarity and documentation.
-    # This interface is used for Proxmox management, web GUI, SSH, and cluster communication.
-    # The web GUI and other admin services should only be accessible on this VLAN.
 
 source /etc/network/interfaces.d/*
 ```
 
-With this configuration:
+---
 
-* `10.100.60.15` → Storage IP (iSCSI traffic)
-* `10.100.99.15` → Management IP (GUI, SSH, cluster)
-* Storage and management are isolated on separate VLANs
-* Matching last octet simplifies host identification
+# 12.5 Create ACLs for Proxmox Nodes
+
+Access Control Lists (ACLs) define which iSCSI initiators are allowed to connect to the storage target.
+
+Your Proxmox cluster nodes use the following initiator names:
+
+| Node  | Initiator IQN                   |
+| ----- | ------------------------------- |
+| node1 | iqn.2026-03.homelab.local:node1 |
+| node2 | iqn.2026-03.homelab.local:node2 |
+| node3 | iqn.2026-03.homelab.local:node3 |
+| node4 | iqn.2026-03.homelab.local:node4 |
+
+Create ACL entries for each node:
+
+```
+/> iscsi/iqn.2026-03.homelab.local:pve-storage1/tpg1/acls create iqn.2026-03.homelab.local:node1
+/> iscsi/iqn.2026-03.homelab.local:pve-storage1/tpg1/acls create iqn.2026-03.homelab.local:node2
+/> iscsi/iqn.2026-03.homelab.local:pve-storage1/tpg1/acls create iqn.2026-03.homelab.local:node3
+/> iscsi/iqn.2026-03.homelab.local:pve-storage1/tpg1/acls create iqn.2026-03.homelab.local:node4
+```
+
+Verify ACL entries:
+
+```
+/> ls iscsi/iqn.2026-03.homelab.local:pve-storage1/tpg1/acls
+```
+
+Expected output:
+
+```
+o- iqn.2026-03.homelab.local:node1
+o- iqn.2026-03.homelab.local:node2
+o- iqn.2026-03.homelab.local:node3
+o- iqn.2026-03.homelab.local:node4
+```
 
 ---
 
-### Create ACL
+# 12.6 Save Configuration
 
-Example for `pve-node1.homelab.local`:
-
-```
-/> iscsi/iqn.2026-03.homelab.local:pve-storage1/tpg1/acls create iqn.2026-03.homelab.local:pve-node1
-```
-
-(Repeat for each Proxmox node using its hostname.)
-
----
-
-### Save and Exit
+Persist the configuration so it survives reboots.
 
 ```
 /> saveconfig
+```
+
+Exit the shell:
+
+```
 /> exit
 ```
+
+The configuration is stored at:
+
+```
+/etc/rtslib-fb-target/saveconfig.json
+```
+
+---
+
+# 12.7 Final Verification
+
+Run:
+
+```bash
+targetcli ls
+```
+
+You should see a structure similar to:
+
+```
+o- backstores
+| o- block
+|   o- pve-iscsi
+|
+o- iscsi
+  o- iqn.2026-03.homelab.local:pve-storage1
+    o- tpg1
+      o- luns
+      | o- lun0 -> /backstores/block/pve-iscsi
+      o- portals
+      | o- 10.100.60.15:3260
+      o- acls
+        o- iqn.2026-03.homelab.local:node1
+        o- iqn.2026-03.homelab.local:node2
+        o- iqn.2026-03.homelab.local:node3
+        o- iqn.2026-03.homelab.local:node4
+```
+
+---
+
+# Result
+
+The ZFS ZVOL is now exported as an iSCSI target and restricted to the four Proxmox cluster nodes.
+
+## Verify connectivity on each of the notes
+
+**Note:** The error for node1 was all the ports were not tagged to allow vlan 60 on the router. Don't forget to check your networking!
+
+```bash
+iscsiadm -m discovery -t st -p 10.100.60.15
+```
+
+<img width="2561" height="1601" alt="image" src="https://github.com/user-attachments/assets/4eae4ddf-3935-4856-abc7-5e3733646657" />
+
+## Login to the network storage from each node
+
+```bash
+iscsiadm -m node -T iqn.2026-03.homelab.local:pve-storage1 -p 10.100.60.15 --login
+```
+
+<img width="2561" height="1601" alt="image" src="https://github.com/user-attachments/assets/ca810640-217c-4ec6-87db-8f57e4345d76" />
+
+## Verify the session
+
+```bash
+iscsiadm -m session
+```
+<img width="2561" height="1601" alt="image" src="https://github.com/user-attachments/assets/bb9920f8-4ec5-4f5b-95ae-296a2839df44" />
+
+## Use lsblk to verify the disk
+
+```bash
+lsblk
+```
+<img width="2561" height="1601" alt="image" src="https://github.com/user-attachments/assets/96efb86e-5628-4372-b722-4969d814da52" />
+
+**Note:** The storage pool is 1.5TB and is listed as sdb in the screenshot. I will have to figure out how to fix this.
+
+
