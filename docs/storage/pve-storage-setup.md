@@ -188,7 +188,7 @@ zfs set xattr=sa vmdata
 Create a 1.5 TB block device:
 
 ```bash
-zfs create -V 1.5T -o volblocksize=16K vmdata/pve-iscsi
+zfs create -s -V 1.5T -o volblocksize=16K vmdata/pve-iscsi
 ```
 
 * `-V 1.5T` creates a ZVOL at `/dev/zvol/vmdata/pve-iscsi`
