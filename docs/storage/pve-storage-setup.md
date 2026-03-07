@@ -519,6 +519,9 @@ lsblk
 ```
 <img width="2561" height="1601" alt="image" src="https://github.com/user-attachments/assets/96efb86e-5628-4372-b722-4969d814da52" />
 
-**Note:** The storage pool is 1.5TB and is listed as sdb in the screenshot. I will have to figure out how to fix this.
+## Add the Disk to Proxmox to be Usable by the Proxmox Cluster
+
+<img width="2561" height="1601" alt="image" src="https://github.com/user-attachments/assets/86dfbde2-5356-4146-abff-029daddd94e7" />
+
 
 
