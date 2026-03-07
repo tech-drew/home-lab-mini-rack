@@ -521,7 +521,8 @@ lsblk
 
 ## Add the Disk to Proxmox to be Usable by the Proxmox Cluster
 
-<img width="2561" height="1601" alt="image" src="https://github.com/user-attachments/assets/86dfbde2-5356-4146-abff-029daddd94e7" />
+<img width="2561" height="1601" alt="image" src="https://github.com/user-attachments/assets/1e131807-e122-4553-95bb-0c68bcce6de9" />
+
 
 
 
