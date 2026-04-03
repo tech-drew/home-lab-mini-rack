@@ -362,8 +362,15 @@ iface lo inet loopback
 auto eth0
 iface eth0 inet manual
     mtu 9000
+    post-up sleep 2 && /sbin/ethtool --set-eee eth0 eee off
+    post-up sleep 2 && /sbin/ethtool -s eth0 wol d
+    post-up sleep 2 &&
+    # This is the single physical NIC on the node. MTU 9000 enables jumbo frames.
+    # The set-eee eth0 off turns off low power mode. If the setting is enabled your nic m>
+    # The sleep 2 avoids a race condition upon proxmox reboot
+    # All virtual bridges and VLAN interfaces will use this NIC as the base.
 
-# VLAN-aware bridge
+# Virtual bridge connecting VMs, VLANs, and storage
 auto vmbr0
 iface vmbr0 inet manual
     bridge-ports eth0
@@ -372,22 +379,81 @@ iface vmbr0 inet manual
     bridge-vlan-aware yes
     bridge-vids 2-4094
     mtu 9000
+    # This bridge is VLAN-aware, allowing multiple VLANs over the same physical NIC.
+    # All VM and storage traffic passes through this bridge.
 
-# Storage VLAN
-auto vmbr0.60
-iface vmbr0.60 inet static
-    address 10.100.60.15/24
+# Backup interface (VLAN 50)
+auto vmbr0.50
+iface vmbr0.50 inet static
+    address 10.100.50.16/24
     mtu 9000
+    # Dedicated interface for backups
+    # Keep backup traffic separate from management to improve performance and security.
 
-# Management VLAN
+# Management interface (VLAN 99)
 auto vmbr0.99
 iface vmbr0.99 inet static
-    address 10.100.99.15/24
+    address 10.100.99.16/24
     gateway 10.100.99.1
     mtu 1500
+             
 
 source /etc/network/interfaces.d/*
 ```
+---
+
+### Known NIC Power Management Issue (e1000e)
+
+**Note:** The `ethtool` settings applied to `eth0` address a known hardware/driver issue affecting systems using the `e1000e` driver, such as the **HP EliteDesk 800 G4 SFF**.
+
+On these systems, the network interface card (NIC) may enter a low-power or sleep state and fail to properly resume. When this occurs, the interface may still appear **UP**, but no network traffic is transmitted or received—resulting in loss of connectivity (e.g., failed pings, unreachable services).
+
+To mitigate this issue, include the `ethtool` commands shown above in your network interface configuration. These disable energy-efficient features and prevent the NIC from entering problematic power states.
+
+---
+
+### Additional Fix: Disable PCIe Power Management
+
+You should also disable PCIe Active State Power Management (ASPM), which can contribute to this issue.
+
+Edit the GRUB configuration file:
+
+```bash
+/etc/default/grub
+```
+
+Update the following line:
+
+```bash
+GRUB_CMDLINE_LINUX_DEFAULT="quiet"
+```
+
+to:
+
+```bash
+GRUB_CMDLINE_LINUX_DEFAULT="quiet pcie_aspm=off"
+```
+
+Then apply the changes:
+
+```bash
+update-grub
+reboot
+```
+
+This ensures the NIC remains fully powered and prevents it from entering unstable low-power states.
+
+---
+
+### Result
+
+After applying both the `ethtool` settings and disabling ASPM:
+
+* The NIC should no longer enter a faulty low-power state
+* Network connectivity should remain stable
+* The interface will consistently respond to traffic and pings
+
+If the issue persists, further investigation into drivers, firmware, or hardware may be required.
 
 ---
 
