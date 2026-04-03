@@ -65,6 +65,8 @@ iface vmbr0.99 inet static
 source /etc/network/interfaces.d/*
 ```
 
+**Note:** The `HP Elitedesk SFF G4` has a known issue with the `e1000e` ethernet network driver which will cause the network interface to lose connectivity after going into low power mode. Please see the `/etc/network/interfaces` configuration example in the [pve-storage-setup.md](/docs/storage/pve-storage-setup.md) to see how this issue was resolved.
+
 2. **Linux bridges (e.g., `vmbr0`)**
 
    * Bridges must match the NIC MTU.
