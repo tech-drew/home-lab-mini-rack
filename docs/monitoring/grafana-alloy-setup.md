@@ -28,6 +28,8 @@ Proxmox / PBS / Storage Nodes
 Run this on every node (PVE, PBS, storage):
 
 ```bash
+apt update
+apt install unzip -y
 curl -L -O https://github.com/grafana/alloy/releases/latest/download/alloy-linux-amd64.zip
 unzip alloy-linux-amd64.zip
 mv alloy-linux-amd64 /usr/local/bin/alloy
