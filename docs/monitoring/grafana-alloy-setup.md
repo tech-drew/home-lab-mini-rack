@@ -82,8 +82,9 @@ loki.write "default" {
 # Step 4 — Node Label Mapping
 
 Use **names (not VLAN IDs)** for readability.
+Use **actual hostnames** for readability.
 
-| Node Type            | host (use device hostname)        | vlan    |
+| Node Type            | host      | vlan    |
 | -------------------- | ----------- | ------- |
 | Proxmox VE           | node1, node2, etc  | mgmt    |
 | Proxmox Backup (PBS) | pbs-backups | backup  |
