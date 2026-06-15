@@ -30,8 +30,8 @@ Run this on every node (PVE, PBS, storage):
 ```bash
 curl -L -O https://github.com/grafana/alloy/releases/latest/download/alloy-linux-amd64.zip
 unzip alloy-linux-amd64.zip
-sudo mv alloy-linux-amd64 /usr/local/bin/alloy
-sudo chmod +x /usr/local/bin/alloy
+mv alloy-linux-amd64 /usr/local/bin/alloy
+chmod +x /usr/local/bin/alloy
 ```
 
 ---
@@ -39,7 +39,7 @@ sudo chmod +x /usr/local/bin/alloy
 # Step 2 — Create Configuration Directory
 
 ```bash
-sudo mkdir -p /etc/alloy
+mkdir -p /etc/alloy
 ```
 
 ---
@@ -49,7 +49,7 @@ sudo mkdir -p /etc/alloy
 Create the config file:
 
 ```bash
-sudo nano /etc/alloy/config.alloy
+nano /etc/alloy/config.alloy
 ```
 
 ---
@@ -127,7 +127,7 @@ labels = {
 Create the service file:
 
 ```bash
-sudo nano /etc/systemd/system/alloy.service
+nano /etc/systemd/system/alloy.service
 ```
 
 ---
@@ -153,9 +153,9 @@ WantedBy=multi-user.target
 # Step 6 — Enable and Start Alloy
 
 ```bash
-sudo systemctl daemon-reload
-sudo systemctl enable alloy
-sudo systemctl start alloy
+systemctl daemon-reload
+systemctl enable alloy
+systemctl start alloy
 ```
 
 ---
