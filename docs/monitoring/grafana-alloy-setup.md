@@ -2,12 +2,6 @@
 
 This guide explains how to configure **Grafana Alloy** on Proxmox nodes, PBS, and storage systems to send logs to a central **Loki instance** at:
 
-```
-
-[http://10.100.10.18:3100](http://10.100.10.18:3100)
-
-````
-
 The goal is a simple, lightweight, and centralized logging setup with minimal per-node configuration.
 
 ---
@@ -24,7 +18,7 @@ Proxmox / PBS / Storage Nodes
  Central Loki (10.100.10.18:3100)
         │
         ▼
-     Grafana UI
+     Grafana UI (10.100.10.18:3000)
 ````
 
 ---
