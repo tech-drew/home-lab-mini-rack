@@ -275,3 +275,14 @@ If you want to extend this setup later:
 * Auto-detect hostname instead of manual config
 * Add log filtering (reduce noise)
 
+* # Mikrotik Configuration commands
+
+Grafana Loki cannot take syslog logs directly. So the logs get sent to a Grafana Alloy agent which forwards the logs to Grafana Loki. `10.100.99.11` is one of the nodes running Grafana Alloy.
+
+```bash
+/system logging action add name=toloki target=remote remote=10.100.99.11 remote-port=514
+/system logging add topics=system action=toloki
+/system logging add topics=warning action=to-loki
+/system logging add topics=error action=toloki
+```  
+
