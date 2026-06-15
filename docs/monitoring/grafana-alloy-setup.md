@@ -83,7 +83,7 @@ loki.write "default" {
 
 Use **names (not VLAN IDs)** for readability.
 
-| Node Type            | host (use device hostname)        | vlan (use a vlan description not the vlan number)    |
+| Node Type            | host (use device hostname)        | vlan    |
 | -------------------- | ----------- | ------- |
 | Proxmox VE           | node1, node2, etc  | mgmt    |
 | Proxmox Backup (PBS) | pbs-backups | backup  |
