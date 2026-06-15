@@ -65,8 +65,8 @@ loki.source.journal "system" {
   forward_to = [loki.write.default.receiver]
 
   labels = {
-    host = "CHANGE_ME"
-    vlan = "CHANGE_ME"
+    host = "CHANGE_ME",
+    vlan = "CHANGE_ME",
   }
 }
 
@@ -96,8 +96,8 @@ loki.write "default" {
 
 ```hcl
 labels = {
-  host = "pbs-backups"
-  vlan = "backup"
+  host = "pbs-backups",
+  vlan = "backup",
 }
 ```
 
@@ -107,8 +107,8 @@ labels = {
 
 ```hcl
 labels = {
-  host = "pve-node-1"
-  vlan = "mgmt"
+  host = "pve-node-1",
+  vlan = "mgmt",
 }
 ```
 
@@ -118,8 +118,8 @@ labels = {
 
 ```hcl
 labels = {
-  host = "pve-storage"
-  vlan = "storage"
+  host = "pve-storage",
+  vlan = "storage",
 }
 ```
 
