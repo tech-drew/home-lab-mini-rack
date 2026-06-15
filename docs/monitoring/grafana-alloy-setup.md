@@ -114,6 +114,41 @@ labels = {
 
 ---
 
+## Example: PVE Node Accepting Router logs
+
+```hcl
+loki.source.journal "system" {
+  forward_to = [loki.write.default.receiver]
+
+  labels = {
+    host = "node1",
+    vlan = "mgmt",
+  }
+}
+
+# MikroTik syslog input
+loki.source.syslog "mikrotik" {
+  listener {
+    address  = "0.0.0.0:514"
+    protocol = "udp"
+  }
+
+  labels = {
+    job   = "mikrotik",
+    host  = "node1",
+    vlan  = "network",
+  }
+
+  forward_to = [loki.write.default.receiver]
+}
+
+loki.write "default" {
+  endpoint {
+    url = "http://10.100.10.18:3100/loki/api/v1/push"
+  }
+}
+```
+
 ## Example: Storage Node (VLAN 60)
 
 ```hcl
