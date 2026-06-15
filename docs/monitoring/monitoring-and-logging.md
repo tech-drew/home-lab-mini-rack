@@ -5,44 +5,42 @@ This homelab uses a centralized monitoring and logging stack to provide visibili
 ## Architecture
 
 ```text
-┌─────────────────┐
-│   Services &    │
-│ Infrastructure  │
-└────────┬────────┘
-         │
-         ▼
-┌─────────────────┐
-│ Grafana Alloy   │
-│ Metrics & Logs  │
-│ Collection      │
-└────────┬────────┘
-         │
- ┌───────┴────────┐
- ▼                ▼
-┌───────────┐  ┌───────────┐
-│Prometheus │  │   Loki    │
-│ Metrics   │  │   Logs    │
-└─────┬─────┘  └─────┬─────┘
-      │              │
-      └──────┬───────┘
-             ▼
-      ┌────────────┐
-      │  Grafana   │
-      │ Dashboards │
-      └─────┬──────┘
-            │
-            ▼
-     ┌─────────────┐
-     │ Uptime Kuma │
-     │ Availability│
-     │ Monitoring  │
-     └──────┬──────┘
-            │
-            ▼
-   ┌─────────────────┐
-   │ Telegram Alerts │
-   │ Notifications   │
-   └─────────────────┘
+┌──────────────────────┐
+│   Services &         │
+│   Infrastructure     │
+└──────────┬───────────┘
+           │
+           ▼
+┌──────────────────────┐
+│   Grafana Alloy      │
+│   Metrics & Logs     │
+│   Collection         │
+└──────────┬───────────┘
+           │
+           ▼
+┌──────────────────────┐
+│        Loki          │
+│        Logs          │
+└──────────┬───────────┘
+           │
+           ▼
+┌──────────────────────┐
+│       Grafana        │
+│   Dashboards         │
+└──────────┬───────────┘
+           │
+           ▼
+┌──────────────────────┐
+│     Uptime Kuma      │
+│   Availability       │
+│   Monitoring         │
+└──────────┬───────────┘
+           │
+           ▼
+┌──────────────────────┐
+│   Telegram Alerts    │
+│   Notifications      │
+└──────────────────────┘
 ```
 
 ## Stack Summary
@@ -51,7 +49,6 @@ This homelab uses a centralized monitoring and logging stack to provide visibili
 | ------------- | --------------------------------------------- |
 | Uptime Kuma   | Service uptime and availability monitoring    |
 | Grafana Alloy | Collection and forwarding of metrics and logs |
-| Prometheus    | Metrics collection and time-series storage    |
 | Loki          | Centralized log aggregation and storage       |
 | Grafana       | Dashboards, visualization, and observability  |
 | Telegram      | Alert notifications and incident awareness    |
@@ -60,7 +57,6 @@ This homelab uses a centralized monitoring and logging stack to provide visibili
 
 * Infrastructure and service monitoring
 * Centralized log aggregation
-* Metrics collection and visualization
 * Uptime and availability monitoring
 * Real-time alerting through Telegram
 * Historical performance and troubleshooting data
