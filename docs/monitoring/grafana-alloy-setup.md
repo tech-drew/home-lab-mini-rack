@@ -81,8 +81,8 @@ loki.write "default" {
 
 # Step 4 — Node Label Mapping
 
-Use **names (not VLAN IDs)** for readability.
-Use **actual hostnames** for readability.
+- Use **names (not VLAN IDs)** for readability.
+- Use **actual hostnames** for readability.
 
 | Node Type            | host      | vlan    |
 | -------------------- | ----------- | ------- |
