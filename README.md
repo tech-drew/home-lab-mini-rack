@@ -62,7 +62,7 @@ Updates will be added as the lab is built, configured, and iterated on. Some doc
 
 * Idle: ~5–6 W
 * Light load: 7–10 W
-* Full CPU load: 13–15 W
+* Full load: 13–15 W
 
 ### Notes
 
@@ -72,7 +72,7 @@ Updates will be added as the lab is built, configured, and iterated on. Some doc
 
 ### Memory Behavior
 
-**Linux:** Installing 32 GB results in ~30 GB usable. The remainder is hardware-address limited and does not affect stability.
+**Linux:** Installing 32 GB results in ~30 GB usable due to hardware addressing limits. This does not affect stability.
 
 **Windows:** To utilize full installed memory reporting:
 
@@ -83,7 +83,7 @@ Updates will be added as the lab is built, configured, and iterated on. Some doc
 bcdedit /set {current} truncatememory 0x800000000
 ```
 
-The limitation is due to the CPU memory controller and cannot be resolved via RAM configuration changes.
+The limitation is due to the CPU memory controller and cannot be resolved via configuration changes.
 
 ---
 
@@ -103,17 +103,19 @@ The limitation is due to the CPU memory controller and cannot be resolved via RA
 
 ## 6. Proxmox Storage Node & Backup Server
 
-* **Model:** HP EliteDesk G4 SFF (×2)
+* **Model:** HP EliteDesk 800 G4 SFF (×2)
 * **Cost:** $303.36 total (used, purchased 02/06/2026 via eBay)
 
-### CPU Configuration
+---
+
+### CPU Configuration (included in total cost calculation)
 
 | System Role        | CPU                    | Cost   |
 | ------------------ | ---------------------- | ------ |
 | Storage / NAS Node | i7-8700T (6C/12T, 35W) | $86.68 |
 | Backup Server      | i5-8500T (6C/6T, 35W)  | $45.39 |
 
-**Total CPU upgrade cost:** $132.07
+**CPU subtotal:** $132.07
 
 ---
 
@@ -146,7 +148,7 @@ The limitation is due to the CPU memory controller and cannot be resolved via RA
 
 | Item                             | Cost (USD)  |
 | -------------------------------- | ----------- |
-| HP EliteDesk G4 SFF Systems (×2) | $303.36     |
+| HP EliteDesk 800 G4 SFF Systems  | $303.36     |
 | Intel Core i5-8500T CPU          | $45.39      |
 | Intel Core i7-8700T CPU          | $86.68      |
 | Dell Wyse 5070 Thin Clients (×4) | $155.98     |
@@ -163,8 +165,8 @@ Due to fluctuating hardware markets, pricing shown reflects historical purchase 
 
 # Virtualization & Containers
 
-* Proxmox VE
-* Virtual machines (VMs) and LXC containers, some of which run Docker workloads
+* Proxmox VE for virtualization and container management
+* Virtual machines (VMs) and LXC containers managed through Proxmox VE, with some VMs running Docker-based application stacks
 
 ---
 
@@ -203,8 +205,9 @@ Significant financial investment is intentionally deferred until real-world requ
 
 Future revisions may include:
 
-* Upgrading networking infrastructure beyond 1 GbE (2.5 GbE minimum, with 10+ GbE preferred for storage-heavy workloads)
+* Upgrading networking infrastructure beyond 1 GbE (minimum 2.5 GbE, with 10+ GbE preferred for storage-heavy workloads)
 * Increasing PCIe expansion availability for networking and storage flexibility
 * Evaluating higher-performance systems as workload demands increase
 
 These improvements will be balanced against power consumption, heat output, and total operating cost.
+
