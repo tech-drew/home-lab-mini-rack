@@ -153,18 +153,15 @@ The systems originally shipped with i5-8500 (65W) CPUs, which were replaced with
 * **Note:** A pure sine wave UPS is a future upgrade.
 
 ---
-
 # Total Cost of Purchased Materials
 
-| Item                               | Cost (USD) |
-| ---------------------------------- | ---------- |
-| Dell Wyse 5070 Thin Clients (×4)   | $155       |
-| 256 GB M.2 SATA SSDs (×4)          | $74        |
-| HP EliteDesk G4 SFF Systems (×2)   | $300       |
-| CPU Upgrades (i7-8700T + i5-8500T) | $125       |
-| 256 GB SATA SSDs (×2)              | $50        |
-| 2 TB SATA SSDs (×4)                | $400       |
-| **Total**                          | **$1,104** |
+| Item                             | Cost (USD) |
+| -------------------------------- | ---------- |
+| Dell Wyse 5070 Thin Clients (×4) | $155       |
+| 256 GB M.2 SATA SSDs (×4)        | $74        |
+| HP EliteDesk G4 SFF Systems (×2) | $300       |
+| 256 GB SATA SSDs (×2)            | $50        |
+| **Total**                        | **$579**   |
 
 ---
 
