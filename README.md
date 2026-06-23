@@ -2,7 +2,29 @@
 
 The primary objective of this home lab is to design and implement an environment that closely replicates enterprise IT infrastructure in both architecture and operational practices.
 
-In addition to this core objective, the project emphasizes several secondary priorities: minimizing physical footprint, optimizing energy efficiency, reducing noise levels, and maintaining strict cost control.
+In addition to this core objective, the project emphasizes several secondary priorities: minimizing physical footprint, optimizing energy efficiency, reducing noise levels, and maintaining strict cost control. 
+
+To meet these tight design constraints and add a touch of creative engineering, the physical infrastructure is housed inside a custom-built, open-concept enclosure constructed out of Lego and Mega Bloks.
+
+---
+
+<img width="4000" height="2252" alt="20260622_082125" src="https://github.com/user-attachments/assets/c2eb1acb-a849-453e-be73-43161214c35c" />
+
+<img width="2713" height="2250" alt="20260622_085314" src="https://github.com/user-attachments/assets/5091c224-cf18-4e43-9bda-60eb9c379409" />
+
+
+# The Physical Chassis: Block-Rack
+
+Rather than utilizing a traditional, expensive, and heavy consumer metal rack, the core infrastructure (including the thin clients, modem, and router) is housed in a custom-engineered enclosure built entirely out of Lego and Mega Bloks. 
+
+As a structural building material, plastic blocks possess two distinct engineering weaknesses: **Weight limits** and **Heat tolerance (ABS plastic degradation)**. 
+
+The architecture of this lab explicitly designs around these constraints:
+
+* **Low Structural Weight:** The Dell Wyse 5070 nodes are ultra-lightweight thin clients. Stacking them does not exert enough downward force to stress the interlocking clutch power of the Lego and Mega Bloks chassis.
+* **Passive & Low-Heat Design:** The compute nodes utilize energy-efficient, low-wattage architectures that output minimal thermal energy. Coupled with an open-air vertical rack design and supplementary USB cooling fans, internal ambient heat remains well below the thresholds required to compromise the integrity of the plastic blocks.
+
+This custom block-rack allows the entire enterprise stack to scale dynamically, operate silently, and use a minimal physical footprint.
 
 ---
 
@@ -10,7 +32,7 @@ In addition to this core objective, the project emphasizes several secondary pri
 
 This repository documents the planning and design of my personal home lab project. It is currently a work in progress and includes design notes, hardware plans, and intended setup steps.
 
-Updates will be added as the lab is built, configured, and iterated on. Some documentation may become out of date over time. Once everything is set up and operational, documentation will be cleaned and consolidated.
+Updates will be added as the lab is built, configured, and iterated on. Some documentation may become out of date over time.
 
 ---
 
@@ -23,7 +45,7 @@ Updates will be added as the lab is built, configured, and iterated on. Some doc
 ## 1. Modem
 
 * **Model:** Arris Surfboard S33
-* **Cost:** Already owned
+* **Cost:** Already owned (~$130 typical retail)
 
 ---
 
@@ -81,6 +103,7 @@ Updates will be added as the lab is built, configured, and iterated on. Some doc
 
 ```bash
 bcdedit /set {current} truncatememory 0x800000000
+
 ```
 
 The limitation is due to the CPU memory controller and cannot be resolved via configuration changes.
@@ -110,10 +133,10 @@ The limitation is due to the CPU memory controller and cannot be resolved via co
 
 ### CPU Configuration (included in total cost calculation)
 
-| System Role        | CPU                    | Cost   |
-| ------------------ | ---------------------- | ------ |
+| System Role | CPU | Cost |
+| --- | --- | --- |
 | Storage / NAS Node | i7-8700T (6C/12T, 35W) | $86.68 |
-| Backup Server      | i5-8500T (6C/6T, 35W)  | $45.39 |
+| Backup Server | i5-8500T (6C/6T, 35W) | $45.39 |
 
 **CPU subtotal:** $132.07
 
@@ -123,8 +146,7 @@ The limitation is due to the CPU memory controller and cannot be resolved via co
 
 * Boot drives: 256 GB SATA SSD (×2 total) — $50 total
 * Data drives: 2 TB SATA SSD (×4 total) — $400 total
-
-  * Configured in mirrored pairs for redundancy
+* Configured in mirrored pairs for redundancy
 
 ---
 
@@ -146,20 +168,20 @@ The limitation is due to the CPU memory controller and cannot be resolved via co
 
 # Total Cost of Purchased Materials
 
-| Item                             | Cost (USD)  |
-| -------------------------------- | ----------- |
-| HP EliteDesk 800 G4 SFF Systems  | $303.36     |
-| Intel Core i5-8500T CPU          | $45.39      |
-| Intel Core i7-8700T CPU          | $86.68      |
-| Dell Wyse 5070 Thin Clients (×4) | $155.98     |
-| 256 GB M.2 SATA SSDs (×4)        | $73.63      |
-| **Total**                        | **$665.04** |
+| Item | Cost (USD) |
+| --- | --- |
+| HP EliteDesk 800 G4 SFF Systems | $303.36 |
+| Intel Core i5-8500T CPU | $45.39 |
+| Intel Core i7-8700T CPU | $86.68 |
+| Dell Wyse 5070 Thin Clients (×4) | $155.98 |
+| 256 GB M.2 SATA SSDs (×4) | $73.63 |
+| **Total** | **$665.04** |
 
 ---
 
 ### Pricing Disclaimer
 
-Due to fluctuating hardware markets, pricing shown reflects historical purchase conditions and may not represent current market values. Many components were sourced from secondary markets or acquired prior to pricing volatility.
+Due to fluctuating hardware markets, pricing shown reflects historical purchase conditions and may not represent current market values. Many components were sourced from secondary markets or acquired prior to recent tech pricing volatility.
 
 ---
 
@@ -210,4 +232,3 @@ Future revisions may include:
 * Evaluating higher-performance systems as workload demands increase
 
 These improvements will be balanced against power consumption, heat output, and total operating cost.
-
