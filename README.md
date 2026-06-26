@@ -144,9 +144,11 @@ The limitation is due to the CPU memory controller and cannot be resolved via co
 
 ### Storage Configuration
 
-* Boot drives: 256 GB SATA SSD (×2 total) — $50 total
-* Data drives: 2 TB SATA SSD (×4 total) — $400 total
+* Boot drives: 256 GB SATA SSD (×2 total) — Already owned
+* Data drives: 2 TB SATA SSD (×4 total) — Already owned
 * Configured in mirrored pairs for redundancy
+
+**Note:** SSD prices are expensive right now. The 2TB drives I used are not necessary for this project. My backup server is currently using about 100GB of storage and my storage server is using about 50GB of storage. 256GB SSDs are probaby enough space to get you started on a project like this.
 
 ---
 
