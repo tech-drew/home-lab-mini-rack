@@ -197,6 +197,7 @@ This design prevents:
 * Wireless clients inherit **identical firewall rules** as wired clients within the same VLAN.
 * Guest and IoT SSIDs are fully isolated and restricted to WAN access only.
 * CAPsMAN configuration changes follow the same Safe Mode and rollback procedures as core router changes.
+* **VLAN 99 (Management)** follows a **default-deny outbound Internet policy**. Infrastructure devices communicate only with internal management services. Remote administration is performed through Tailscale running on the Proxmox hosts. Outbound Internet access is temporarily enabled only during scheduled maintenance windows to perform operating system, firmware, and package updates.
 
 ---
 
