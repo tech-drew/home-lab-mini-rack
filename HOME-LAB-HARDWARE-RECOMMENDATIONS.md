@@ -149,6 +149,31 @@ When purchasing used hardware, prioritize systems with the specifications and up
 
 # Low-cost Option
 
+If your goal is to learn either Proxmox or Kubernetes, but not both at the same time, this is an excellent place to start. A home lab at this price point is inexpensive to build, consumes very little power, and still provides enough resources to learn the fundamentals of virtualization, containers, networking, storage, backups, and high availability.
+
+The goal of this tier is not maximum performance. Instead, the focus is building a reliable learning environment using affordable, efficient hardware. Many of these systems can be purchased used and provide an excellent foundation for learning infrastructure concepts before investing in more powerful equipment.
+
+Router, Firewall, and Switch
+
+Your network is the foundation of your home lab, so this is one area where it is worth investing in quality hardware.
+
+At a minimum, your router or firewall should support VLANs. Ideally, it should also support jumbo frames for your storage network. Network segmentation is one of the most valuable skills you can learn in a home lab, and many of the examples throughout this guide assume you have the ability to create and manage multiple VLANs.
+
+If you are following the hardware recommendations in this guide, you will need Ethernet connections for:
+
+Your WAN connection (modem uplink)
+Four compute cluster nodes
+One storage server
+One backup server
+
+This requires seven Ethernet ports in total. Your networking equipment should allow you to configure VLANs on the six LAN ports connected to your home lab devices. Depending on your router or firewall, you may need to add a managed switch to provide enough ports and VLAN support.
+
+I recommend spending time researching different networking ecosystems, such as UniFi, MikroTik, or Ruckus, before making your first purchase. Whenever practical, standardize on a single vendor for your router, switches, and wireless access points. Using equipment from the same ecosystem provides a more consistent management experience, simplifies configuration, and reduces troubleshooting as your home lab grows.
+
+If your current networking equipment does not support VLANs or other advanced networking features, upgrading your router or firewall should be your highest hardware priority. It is better to invest in a strong networking foundation and purchase slightly less powerful compute nodes than it is to have powerful servers connected to a limited network.
+
+A quality router or firewall can remain part of your home lab through all three budget tiers, allowing you to upgrade your compute, storage, and backup hardware over time without replacing your networking infrastructure.
+
 ## Compute Cluster (4 Nodes)
 
 Each cluster node should have approximately the following specifications:
