@@ -147,7 +147,7 @@ The used market also allows you to build a larger lab for the same budget as pur
 
 When purchasing used hardware, prioritize systems with the specifications and upgrade options you need rather than focusing only on the exact model. Business-class mini PCs and thin clients are frequently available in many different CPU, memory, and storage configurations, so flexibility is often more valuable than finding a specific device.
 
-### Low-cost Option
+# Low-cost Option
 
 ## Compute Cluster (4 Nodes)
 
@@ -206,7 +206,7 @@ For the storage and backup servers, prioritize systems with expansion options wh
 
 At this budget level, you do not need 10 GbE networking immediately. However, selecting systems with upgrade paths gives you the ability to improve storage performance later without replacing the entire server.
 
-### Medium-Cost Option
+# Medium-Cost Option
 
 The medium-cost configuration is what I recommend for most people who want to build a long-term home lab. It provides enough compute, memory, and storage to comfortably run both a Proxmox cluster and a Kubernetes cluster simultaneously while leaving room for additional infrastructure services such as monitoring, logging, automation, CI/CD, and development environments.
 
@@ -329,5 +329,5 @@ When selecting a UPS, make sure it provides enough capacity for your expected lo
 
 A UPS is not the most exciting home lab purchase, but it is one of the upgrades that can prevent data loss, reduce hardware wear, and make your environment significantly more reliable.
 
-### High-cost option
+# High-cost option
 
