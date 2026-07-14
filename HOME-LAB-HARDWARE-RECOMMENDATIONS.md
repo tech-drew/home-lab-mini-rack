@@ -63,6 +63,31 @@ As a general recommendation for anyone interested in infrastructure, I suggest b
 
 Supporting services such as monitoring, logging, alerting, DNS, and automation can usually run as virtual machines or containers on your compute cluster and generally do not require dedicated hardware.
 
+## Buying Used Business Hardware
+
+This guide focuses heavily on used hardware, especially for the low-cost and medium-cost configurations. While new hardware is always an option, used business-class systems often provide the best value for a home lab because they offer excellent reliability, low power consumption, and predictable hardware configurations.
+
+Companies such as Dell, HP, and Lenovo produce millions of small form factor business systems and thin clients for enterprise customers. Because these devices are deployed in large quantities, they are frequently replaced during corporate hardware refresh cycles and become widely available on the used market at affordable prices.
+
+Examples of systems commonly found used include:
+
+- Dell Wyse thin clients and Dell OptiPlex Micro systems
+- HP Thin Clients and HP EliteDesk Mini systems
+- Lenovo ThinkCentre Tiny systems
+
+These systems are attractive for home labs because they are:
+
+- Small and quiet
+- Designed for continuous business operation
+- Energy efficient
+- Easy to replace or expand as your lab grows
+- Available with enterprise-oriented features such as Intel networking and remote management capabilities
+- Well documented 
+
+The used market also allows you to build a larger lab for the same budget as purchasing fewer new systems. For example, instead of buying one expensive new server, you can often purchase several small used systems and build a cluster that provides a much better learning experience.
+
+When purchasing used hardware, prioritize systems with the specifications and upgrade options you need rather than focusing only on the exact model. Business-class mini PCs and thin clients are frequently available in many different CPU, memory, and storage configurations, so flexibility is often more valuable than finding a specific device.
+
 ## Where to Invest Your Budget
 
 If I were building a new home lab from scratch today, I would invest my budget in the following order.
@@ -121,31 +146,6 @@ Throughout the remainder of this guide, I recommend hardware across three differ
 Remember that a home lab is an iterative project. You don't know what you don't know when you're getting started, and your interests will almost certainly change as you gain experience.
 
 For that reason, I generally recommend starting with the lowest-cost configuration that meets your current learning goals. As your skills develop, you'll have a much better understanding of where additional CPU performance, memory, storage, or networking will provide the greatest benefit. Upgrading based on real experience is almost always a better investment than buying expensive hardware before you know whether you'll actually need it.
-
-## Buying Used Business Hardware
-
-This guide focuses heavily on used hardware, especially for the low-cost and medium-cost configurations. While new hardware is always an option, used business-class systems often provide the best value for a home lab because they offer excellent reliability, low power consumption, and predictable hardware configurations.
-
-Companies such as Dell, HP, and Lenovo produce millions of small form factor business systems and thin clients for enterprise customers. Because these devices are deployed in large quantities, they are frequently replaced during corporate hardware refresh cycles and become widely available on the used market at affordable prices.
-
-Examples of systems commonly found used include:
-
-- Dell Wyse thin clients and Dell OptiPlex Micro systems
-- HP Thin Clients and HP EliteDesk Mini systems
-- Lenovo ThinkCentre Tiny systems
-
-These systems are attractive for home labs because they are:
-
-- Small and quiet
-- Designed for continuous business operation
-- Energy efficient
-- Easy to replace or expand as your lab grows
-- Available with enterprise-oriented features such as Intel networking and remote management capabilities
-- Well documented 
-
-The used market also allows you to build a larger lab for the same budget as purchasing fewer new systems. For example, instead of buying one expensive new server, you can often purchase several small used systems and build a cluster that provides a much better learning experience.
-
-When purchasing used hardware, prioritize systems with the specifications and upgrade options you need rather than focusing only on the exact model. Business-class mini PCs and thin clients are frequently available in many different CPU, memory, and storage configurations, so flexibility is often more valuable than finding a specific device.
 
 # Low-cost Option
 
