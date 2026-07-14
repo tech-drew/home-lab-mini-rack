@@ -147,7 +147,7 @@ The used market also allows you to build a larger lab for the same budget as pur
 
 When purchasing used hardware, prioritize systems with the specifications and upgrade options you need rather than focusing only on the exact model. Business-class mini PCs and thin clients are frequently available in many different CPU, memory, and storage configurations, so flexibility is often more valuable than finding a specific device.
 
-###Low-cost Option
+### Low-cost Option
 
 ## Compute Cluster (4 Nodes)
 
