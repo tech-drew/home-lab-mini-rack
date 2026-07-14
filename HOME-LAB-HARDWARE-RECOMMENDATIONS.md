@@ -122,86 +122,212 @@ Remember that a home lab is an iterative project. You don't know what you don't 
 
 For that reason, I generally recommend starting with the lowest-cost configuration that meets your current learning goals. As your skills develop, you'll have a much better understanding of where additional CPU performance, memory, storage, or networking will provide the greatest benefit. Upgrading based on real experience is almost always a better investment than buying expensive hardware before you know whether you'll actually need it.
 
+## Buying Used Business Hardware
 
-## Low-Cost Option
+This guide focuses heavily on used hardware, especially for the low-cost and medium-cost configurations. While new hardware is always an option, used business-class systems often provide the best value for a home lab because they offer excellent reliability, low power consumption, and predictable hardware configurations.
 
-If your goal is to learn either **Proxmox** *or* **Kubernetes**, but not both at the same time, this is an excellent place to start. A home lab at this price point is inexpensive to build, consumes very little power, and still provides enough resources to learn the fundamentals of virtualization, containers, networking, storage, backups, and high availability.
+Companies such as Dell, HP, and Lenovo produce millions of small form factor business systems and thin clients for enterprise customers. Because these devices are deployed in large quantities, they are frequently replaced during corporate hardware refresh cycles and become widely available on the used market at affordable prices.
 
-### Router, Firewall, and Switch
+Examples of systems commonly found used include:
 
-Your network is the foundation of your home lab, so this is one area where it is worth investing in quality hardware.
+- Dell Wyse thin clients and Dell OptiPlex Micro systems
+- HP Thin Clients and HP EliteDesk Mini systems
+- Lenovo ThinkCentre Tiny systems
 
-At a minimum, your router or firewall should support **VLANs**. Ideally, it will also support Jumbo frames for your storage backplane. Network segmentation is one of the most valuable skills you can learn in a home lab, and many of the examples throughout this guide assume you have the ability to create and manage multiple VLANs.
+These systems are attractive for home labs because they are:
 
-If you are following the hardware recommendations in this guide, you will need Ethernet connections for:
+- Small and quiet
+- Designed for continuous business operation
+- Energy efficient
+- Easy to replace or expand as your lab grows
+- Available with enterprise-oriented features such as Intel networking and remote management capabilities
+- Well documented 
 
-* Your WAN connection (modem uplink)
-* Four compute cluster nodes
-* One storage server
-* One backup server
+The used market also allows you to build a larger lab for the same budget as purchasing fewer new systems. For example, instead of buying one expensive new server, you can often purchase several small used systems and build a cluster that provides a much better learning experience.
 
-This requires **seven Ethernet ports** in total. Your networking equipment should allow you to configure VLANs on the six LAN ports connected to your home lab devices. Depending on your router or firewall, you may need to add a **managed switch** to provide enough ports and VLAN support.
+When purchasing used hardware, prioritize systems with the specifications and upgrade options you need rather than focusing only on the exact model. Business-class mini PCs and thin clients are frequently available in many different CPU, memory, and storage configurations, so flexibility is often more valuable than finding a specific device.
 
-I also recommend spending time researching different networking ecosystems, such as UniFi, MikroTik, or Ruckus, before making your first purchase. Whenever practical, standardize on a single vendor for your router, switches, and wireless access points. Using equipment from the same ecosystem often provides a more consistent management experience, simplifies configuration, and reduces troubleshooting as your home lab grows.
+###Low-cost Option
 
-If your current networking equipment does not support VLANs or other advanced networking features, **upgrading your router or firewall should be your highest hardware priority**. It is better to invest in a solid networking foundation and purchase slightly less powerful compute nodes than it is to have powerful servers connected to a limited network. A quality router or firewall can easily serve as the foundation for all three budget tiers in this guide, allowing you to upgrade your compute, storage, and backup hardware over time without replacing your networking infrastructure.
-
-### Compute Cluster (4 Nodes)
+## Compute Cluster (4 Nodes)
 
 Each cluster node should have approximately the following specifications:
 
 * Low-power quad-core CPU (4 cores / 4 threads, 15 watts or less)
-* Examples: Intel J5005, Intel N100, Intel N150
+* Examples:
+
+  * Intel Pentium J5005
+  * Intel N100
+  * Intel N150
 * 16 GB of RAM
 * 256 GB local SSD for the operating system and virtual machines
-* 1 GB Intel network adapter
-* Total cost for the 4 identical nodes. $200-$400
-* **Note** 2.5 GB network adapters or devices with a PCIE slot to add a network adapter are nice if you can get them for no extra cost. But they are not needed at this price point.
+* Intel 1 GbE network adapter
+* Estimated cost for all four nodes: **$200–400**
 
-### Backup Server / Storage Server
+Example systems in this category include:
+
+* Dell Wyse 5070 Extended Thin Client (Intel J5005)
+* Lenovo ThinkCentre M710q Tiny
+* Lenovo ThinkCentre M720q Tiny
+* Dell OptiPlex 3050 Micro
+* Dell OptiPlex 3060 Micro
+* HP EliteDesk 800 G3 Mini
+
+Thin clients are especially attractive at this price point because they are inexpensive, quiet, compact, and extremely power efficient. They are also widely available on the used market because businesses frequently replace them in large quantities.
+
+> **Note:** At this price point, most thin clients and mini PCs will only include 1 GbE networking. This is perfectly acceptable for a low-cost home lab.
+>
+> If you find a system with 2.5 GbE networking, consider it a bonus. Some systems also support networking upgrades through an M.2 Wi-Fi slot adapter or PCIe expansion card. These upgrades are useful if you want faster networking in the future, but they are not required at this budget level.
+
+## Backup Server and Storage Server
 
 Recommended specifications:
 
 * 6-core / 6-thread CPU
-* Examples: Intel Core i5-8500T, Intel Core i5-9500T
+* Examples:
+
+  * Intel Core i5-8500T
+  * Intel Core i5-9500T
 * 16 GB of RAM
 * 128 GB SSD for the operating system
-* Two 256 GB SSDs configured as a mirror (RAID 1 or ZFS mirror) for backup storage
-* Total cost for the two servers. $200-$400
+* Two 256 GB SSDs configured as a mirror (RAID 1 or ZFS mirror)
+* Estimated cost for both servers: **$200–400**
 
+Example systems in this category include:
 
-### Don't Underestimate Low-Power Hardware
+* Lenovo ThinkCentre M920q Tiny
+* Lenovo ThinkCentre M720q Tiny
+* Dell OptiPlex 5060 Micro
+* Dell OptiPlex 7060 Micro
+* HP EliteDesk 800 G4 Mini
+* HP EliteDesk 800 G5 Mini
 
-If you compare these processors using a benchmark such as PassMark, their performance may seem underwhelming. However, benchmarks don't tell the whole story.
+For the storage and backup servers, prioritize systems with expansion options when possible. Some of these systems include PCIe slots or proprietary expansion options that allow you to add faster networking later.
 
-The "secret" is Linux.
+At this budget level, you do not need 10 GbE networking immediately. However, selecting systems with upgrade paths gives you the ability to improve storage performance later without replacing the entire server.
 
-Linux is incredibly resource-efficient, and if you design your workloads with your hardware limitations in mind, even modest systems can accomplish far more than you might expect. Most infrastructure services consume very little CPU or memory when properly configured.
+### Medium-Cost Option
 
-This project originally started with a four-node Proxmox cluster built from Dell Wyse 5070 thin clients equipped with Intel J5005 processors and 32 GB of RAM in each node. Despite the modest hardware, I was able to run:
+The medium-cost configuration is what I recommend for most people who want to build a long-term home lab. It provides enough compute, memory, and storage to comfortably run both a Proxmox cluster and a Kubernetes cluster simultaneously while leaving room for additional infrastructure services such as monitoring, logging, automation, CI/CD, and development environments.
 
-* A four-node Proxmox cluster
-* Centralized logging (syslog)
-* Monitoring and alerting services running in containers
-* High availability between cluster nodes
-* Dedicated backup and storage servers
+Compared to the low-cost option, this tier focuses less on minimizing cost and more on providing room to grow. It strikes a good balance between performance, power efficiency, and expandability without venturing into expensive enterprise hardware.
 
-The entire environment performed surprisingly well while remaining quiet, energy-efficient, and inexpensive to operate.
+Router, Firewall, and Switch
 
-### You Don't Need Much Storage to Get Started
+The networking recommendations from the low-cost configuration still apply here. Continue investing in quality networking hardware that supports VLANs, jumbo frames, and managed switching.
 
-The recommended storage capacities may seem surprisingly small, especially if you're accustomed to enterprise hardware or modern desktop PCs. However, most beginners dramatically overestimate how much storage they actually need.
+At this budget level, however, I also recommend planning for faster networking in the future. If your budget allows, consider purchasing a managed switch that supports 2.5 GbE for your compute nodes and has the ability to support 10 GbE uplinks for your storage infrastructure.
 
-In my original lab, all of my virtual machines, containers, and shared storage consumed only about **100 GB** of network storage, while backups required roughly **130–150 GB**. That left plenty of room for experimentation.
+While 1 GbE networking is perfectly usable, additional bandwidth becomes increasingly valuable as your virtual machine count grows and multiple cluster nodes begin accessing shared storage simultaneously.
 
-Your cluster nodes do not need much compute to get started. However, it is worth it to get decent computer on your storage server and backup server at this price point.
+## Compute Cluster (4 Nodes)
 
-Your requirements may differ depending on your workloads, but at this budget level, I recommend buying whatever affordable hardware you can find rather than trying to build the "perfect" system from the beginning.
+The medium-cost compute cluster is where you start moving beyond basic experimentation and into a more capable infrastructure lab. The goal at this tier is to have enough CPU, memory, and storage to comfortably run both a **Proxmox cluster** and a **Kubernetes cluster** at the same time while still leaving resources available for additional services.
 
-A home lab is an iterative project. Start with hardware that allows you to learn, then upgrade individual components over time as your interests evolve and your storage, compute, or memory requirements increase.
+Each compute node should have approximately the following specifications:
 
+* 6-core / 12-thread low-power CPU
 
-### Medium-cost Option
+  * Examples: Intel Core i5-10500T or Intel Core i5-11500T
+* 32 GB of RAM
+* 512 GB local SSD for the operating system, virtual machines, and containers
+* Intel Ethernet adapter (preferred)
+* 2.5 GbE networking capability when possible
+* Expansion options for future networking upgrades
+* Estimated cost for all four nodes: **$500–900**, depending on the systems you purchase
+
+Example systems in this category include:
+
+* Lenovo ThinkCentre M90q Tiny Gen 2
+* HP EliteDesk 800 G6 Mini
+* Similar Lenovo ThinkCentre Tiny, HP EliteDesk Mini, or Dell OptiPlex Micro systems
+
+These systems provide a good balance of performance, power efficiency, size, and availability on the used market. They are significantly more capable than older thin clients while still maintaining the small footprint and low power consumption that make them ideal for a home lab.
+
+> **Note:** Many thin clients and mini PCs in this price range will still come with only a 1 GbE Ethernet adapter. This is not necessarily a problem. At this tier, prioritize systems with expansion options rather than requiring built-in 2.5 GbE.
+>
+> Some systems allow you to add faster networking through an M.2 Wi-Fi slot adapter, while others include a PCIe expansion slot that can accept a low-profile network card. For example, some Lenovo ThinkCentre Tiny models provide PCIe expansion options, allowing additional networking hardware to be added depending on the specific configuration.
+>
+> If you can find systems with built-in 2.5 GbE at a reasonable price, that is a bonus. However, it should not be a requirement at this budget level.
+
+## Backup Server and Storage Server
+
+Recommended specifications:
+
+* 6-core / 12-thread CPU
+
+  * Examples: Intel Core i5-10500T or Intel Core i5-11500T
+* 32 GB of RAM
+* 128 GB SSD for the operating system
+* Two 512 GB SSDs configured as a mirror (RAID 1 or ZFS mirror)
+* PCIe expansion slot for adding a **10 GbE network adapter**
+* Intel Ethernet adapter preferred
+* Estimated cost for both servers: **$300–600**
+
+For the storage and backup servers, prioritize expandability over size. These systems are where faster networking provides the greatest benefit.
+
+As your lab grows, storage traffic can quickly become the bottleneck. A 10 GbE connection between your storage server and compute cluster can significantly improve performance for workloads involving:
+
+* Virtual machine storage
+* Kubernetes persistent volumes
+* Large file transfers
+* Backups
+* Replication
+* Shared storage technologies such as NFS, SMB, or iSCSI
+
+You do not need to install 10 GbE networking immediately. The important thing is purchasing hardware that gives you the option to upgrade later.
+
+## Prioritize Expandability
+
+The biggest difference between the low-cost and medium-cost configurations is not simply performance—it is **upgrade flexibility**.
+
+At this tier, look for systems that allow you to improve networking as your home lab grows.
+
+For compute nodes, prioritize:
+
+* Intel network adapters whenever possible
+* Systems that can accept M.2 Ethernet adapters
+* Systems with PCIe expansion options
+* 2.5 GbE support when available at a reasonable price
+
+For storage and backup servers, prioritize:
+
+* PCIe expansion slots
+* Multiple storage connections
+* The ability to add 10 GbE networking later
+
+A common mistake is buying the fastest system possible while ignoring expandability. A slightly slower system with upgrade options will often provide more long-term value than a faster system that cannot be expanded.
+
+You do not need 2.5 GbE or 10 GbE networking on day one. Instead, purchase hardware that gives you a clear upgrade path. As your workloads increase, you can add faster networking when it provides a measurable benefit rather than spending money upfront on features you may not use.
+
+## Why This Configuration?
+
+For many home lab enthusiasts, this is the ideal balance between cost, performance, and practicality.
+
+You gain enough compute resources to run multiple clusters, additional infrastructure services, and larger workloads while still benefiting from modern low-power hardware. At the same time, choosing systems with networking upgrade options prevents you from having to replace your hardware as your lab becomes more advanced.
+
+This configuration is powerful enough to support years of learning while remaining quiet, efficient, and practical for a home environment.
+
+## Consider Adding a UPS
+
+At this stage of your home lab journey, you should also consider adding an **Uninterruptible Power Supply (UPS)** if you do not already have one.
+
+A UPS protects your infrastructure from unexpected power loss and gives your equipment time to shut down gracefully during an outage. This becomes increasingly important as you begin running multiple always-on services, storage systems, and network infrastructure.
+
+A UPS should ideally protect more than just your servers. Consider including:
+
+* Firewall/router
+* Dedicated wireless access points
+* Network switches
+* Compute nodes
+* Storage server
+* Backup server
+
+Keeping your networking equipment online during a power event is especially valuable because many home lab services depend on the network being available. Protecting your firewall, switches, and access points can allow you to maintain connectivity even during short outages.
+
+When selecting a UPS, make sure it provides enough capacity for your expected load and supports features such as USB connectivity or network management if you want automated shutdown capabilities. Many virtualization platforms can integrate with UPS software to safely shut down virtual machines and hosts when battery power becomes low.
+
+A UPS is not the most exciting home lab purchase, but it is one of the upgrades that can prevent data loss, reduce hardware wear, and make your environment significantly more reliable.
 
 ### High-cost option
 
