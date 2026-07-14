@@ -113,30 +113,24 @@ If your goal is to learn either **Proxmox** *or* **Kubernetes**, but not both at
 Each cluster node should have approximately the following specifications:
 
 * Low-power quad-core CPU (4 cores / 4 threads, 15 watts or less)
-
-  * Examples: Intel J5005, Intel N100, Intel N150
+* Examples: Intel J5005, Intel N100, Intel N150
 * 16 GB of RAM
 * 256 GB local SSD for the operating system and virtual machines
+* 1 GB Intel network adapter
+* Total cost for the 4 identical nodes. $200-$400
+* **Note** 2.5 GB network adapters or devices with a PCIE slot to add a network adapter are nice if you can get them for no extra cost. But they are not needed at this price point.
 
-### Backup Server
+### Backup Server / Storage Server
 
 Recommended specifications:
 
 * 6-core / 6-thread CPU
-
-  * Examples: Intel Core i5-8500T, Intel Core i5-9500T
+* Examples: Intel Core i5-8500T, Intel Core i5-9500T
+* 16 GB of RAM
 * 128 GB SSD for the operating system
 * Two 256 GB SSDs configured as a mirror (RAID 1 or ZFS mirror) for backup storage
+* Total cost for the two servers. $200-$400
 
-### Storage Server
-
-Recommended specifications:
-
-* 6-core / 6-thread CPU
-
-  * Examples: Intel Core i5-8500T, Intel Core i5-9500T
-* 128 GB SSD for the operating system
-* Two 256 GB SSDs configured as a mirror (RAID 1 or ZFS mirror) for shared storage
 
 ### Don't Underestimate Low-Power Hardware
 
@@ -161,6 +155,8 @@ The entire environment performed surprisingly well while remaining quiet, energy
 The recommended storage capacities may seem surprisingly small, especially if you're accustomed to enterprise hardware or modern desktop PCs. However, most beginners dramatically overestimate how much storage they actually need.
 
 In my original lab, all of my virtual machines, containers, and shared storage consumed only about **100 GB** of network storage, while backups required roughly **130–150 GB**. That left plenty of room for experimentation.
+
+Your cluster nodes do not need much compute to get started. However, it is worth it to get decent computer on your storage server and backup server at this price point.
 
 Your requirements may differ depending on your workloads, but at this budget level, I recommend buying whatever affordable hardware you can find rather than trying to build the "perfect" system from the beginning.
 
