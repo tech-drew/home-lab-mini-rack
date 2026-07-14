@@ -54,15 +54,16 @@ Instead of buying expensive new hardware, look toward off-lease business-class m
 
 ### Advantages of Corporate Mini PCs | Key System Families to Look For
 
-• Built for continuous, reliable business operations
-• Highly standardized and incredibly well-documented
-• Tiny footprint with ultra-low idle power draw
-• Frequently equipped with enterprise Intel network chips 
+* **Built for continuous, reliable business operations:** Designed with tighter engineering tolerances than consumer-grade equivalents.
+* **Highly standardized and well-documented:** Firmware updates and replacement parts are incredibly easy to source.
+* **Tiny footprint with ultra-low idle power draw:** Most idle at just 5W to 12W of power.
+* **Enterprise-grade silicon:** Frequently equipped with reliable enterprise-oriented Intel network chips.
 
 ### Common Systems
-• **Dell:** Wyse Thin Clients, OptiPlex Micro
-**HP:** ProDesk Mini, EliteDesk Mini
-**Lenovo:** ThinkCentre Tiny (M710q, M720q, M90q, etc.)
+
+* **Dell:** Wyse Thin Clients (e.g., 5070 Extended), OptiPlex Micro (3050, 3060, 5060, 7060)
+* **HP:** ProDesk Mini, EliteDesk Mini (G3, G4, G5)
+* **Lenovo:** ThinkCentre Tiny (M710q, M720q, M920q, etc.)
 
 ## Networking: The Critical Foundation
 
@@ -77,7 +78,13 @@ VLAN capabilities allow you to master network segmentation, advanced firewall to
 
 # Budget Tier 1: The Low-Cost Option
 
-This tier is ideal for beginners looking to learn *either* a hypervisor cluster or a Kubernetes cluster, but not both simultaneously. It focuses on maximizing efficiency and affordability.
+This tier is ideal for beginners looking to learn **either** a hypervisor cluster (e.g., standalone Proxmox) or a Kubernetes cluster.
+
+## Strict Architectural Limits
+
+At this price point, you are working with limited hardware specs (4 cores/4 threads and 16 GB of RAM per node). Because of these physical constraints, **it is highly recommended to run only one cluster type, not both simultaneously.** Attempting to run a Kubernetes cluster *nested inside* a Proxmox hypervisor cluster on this hardware will push the host CPUs and RAM past their limits, resulting in severe resource contention, disk thrashing, and nodes dropping offline.
+
+However, **using Linux and lightweight container configurations (Docker, LXC, or K3s) makes a single-focus cluster work exceptionally well**. Because containers share the host operating system kernel, they bypass the heavy memory and CPU overhead of running full virtual machines. If running a hypervisor cluster, target **1–2 lightweight base VMs** and use **highly efficient containers** to host your actual workloads (DNS, home automation, reverse proxies). If running a bare-metal Kubernetes cluster, deploy K3s directly on the nodes. This focus allows you to run dozens of services without overwhelming your hardware.
 
 ### Networking Requirements
 
@@ -98,8 +105,7 @@ This tier is ideal for beginners looking to learn *either* a hypervisor cluster 
 
 ```
 
-* **Compute Cluster (4x Nodes):**
-* *CPU:* Low-power quad-core ($\le$ 15W TDP), e.g., Intel Pentium J5005, Intel N100/N150, or older 6th/7th Gen Intel Core i5.
+* **Compute Cluster (4x Nodes):** * *CPU:* Low-power quad-core ($\le$ 15W TDP), e.g., Intel Pentium J5005, Intel N100/N150, or older 6th/7th Gen Intel Core i5.
 * *RAM:* 16 GB per node.
 * *Storage:* 256 GB local SATA/NVMe SSD.
 * *NIC:* 1 GbE Intel adapter.
@@ -118,10 +124,9 @@ This tier is ideal for beginners looking to learn *either* a hypervisor cluster 
 
 # Budget Tier 2: The Medium-Cost Option
 
-The sweet spot for most long-term home lab enthusiasts. This tier offers the upgrade flexibility, compute overhead, and memory capacity required to run a Proxmox hypervisor environment and a Kubernetes cluster *at the same time*.
+The sweet spot for most long-term home lab enthusiasts. Thanks to the leap to 6-core/12-thread multi-threaded processors and 32 GB of RAM per node, this tier has the necessary compute overhead and memory capacity to comfortably run **both** a robust bare-metal hypervisor (Proxmox VE) and a fully nested, production-style Kubernetes cluster at the same time.
 
 ### Tier 2 Hardware Specifications
-
 
 ```
                               ┌──────────────────┐
@@ -154,8 +159,7 @@ The sweet spot for most long-term home lab enthusiasts. This tier offers the upg
 
 
 
-> **Why prioritize expandability here?**
-> As your VM and container counts expand, storage throughput becomes your primary bottleneck. Having storage and backup servers capable of accepting 10 GbE network cards means you can upgrade your storage backbone later without replacing your entire environment.
+> **Why prioritize expandability here?** > As your VM and container counts expand, storage throughput becomes your primary bottleneck. Having storage and backup servers capable of accepting 10 GbE network cards means you can upgrade your storage backbone later without replacing your entire environment.
 
 ### Essential Addition: Uninterruptible Power Supply (UPS)
 
@@ -168,6 +172,13 @@ At this tier, an unexpected power failure can cause major ZFS storage corruption
 > *Disclaimer: While I have not personally built out this high-cost tier yet, my research and understanding of scaling limitations point directly toward this hardware selection as my clear roadmap choice.*
 
 This tier is designed for advanced users running resource-heavy workloads, massive container deployments, nested hypervisors, or fast distributed flash storage architectures like **Ceph** across the entire cluster. To bypass the physical limitations of older 1L corporate mini PCs, this tier leans directly into high-density workstations engineered with native high-speed networking.
+
+### Enterprise Gateway: Dedicated Hardware Firewall
+
+At this level of network throughput and density, standard consumer routers or basic switches will bottleneck your traffic. Here, you should invest in a dedicated, high-performance physical hardware firewall running enterprise-capable security software:
+
+* **OPNsense or pfSense:** Deployed on a multi-port Intel 2.5GbE/10GbE fanless appliance (such as those from **Protectli** or **Netgate**). This allows you to scale line-rate routing, intensive Intrusion Detection/Prevention Systems (IDS/IPS like Suricata), and complex multi-VLAN routing without breaking a sweat.
+* **Firewalla Gold Plus / Gold SE:** A highly polished, robust, plug-and-play alternative that handles multi-gigabit traffic with deep packet inspection and zero software management hassle.
 
 ### Tier 3 Hardware Specifications
 
