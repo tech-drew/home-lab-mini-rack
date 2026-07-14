@@ -5,18 +5,25 @@ After building my own home lab and spending a significant amount of time researc
 Rather than focusing on buying the most powerful equipment available, the goal should be building a lab that is reliable, efficient, and enjoyable to use every day. Home labs are long-term projects that evolve over time, so choosing hardware that is easy to expand and inexpensive to operate will pay off far more than chasing maximum performance.
 
 > **Note:** This document was written in **July 2026**. Hardware recommendations change rapidly, so while the specific models listed later may become outdated, the general design principles and recommendations should remain useful for years.
-
 ## Home Labs Are Different from Enterprise Data Centers
 
 One of the biggest mistakes beginners make is trying to recreate an enterprise server room at home.
 
-Enterprise environments are designed around dedicated server rooms with controlled temperatures, redundant cooling, professional electrical infrastructure, and little concern for power consumption or noise. Large rack servers are perfectly acceptable in these environments because they are designed to run in spaces where nobody is working or living.
+Enterprise environments are designed around dedicated server rooms with controlled temperatures, redundant cooling, professional electrical infrastructure, and little concern for power consumption or noise. Large rack-mounted servers are perfectly suited for these environments because they operate in spaces where people are not working or living on a daily basis.
 
 A home lab is a completely different environment.
 
-Most home labs are located in an office, bedroom, garage, closet, or basement where heat, noise, electricity costs, and physical space all matter. Hardware that works well in a corporate data center can quickly become frustrating in a home environment if it sounds like a jet engine or significantly increases your monthly power bill.
+Most home labs are built in an office, bedroom, garage, closet, basement, or another shared living space where heat, noise, electricity costs, and physical space all matter. Hardware that works well in a corporate data center can quickly become frustrating at home if it sounds like a jet engine, produces excessive heat, or noticeably increases your monthly electricity bill.
 
-For most people, it is better to prioritize efficient, modern hardware rather than older enterprise servers. While retired enterprise equipment is often inexpensive on the used market, the savings can quickly disappear through increased electricity usage, additional cooling requirements, and constant fan noise.
+For most people, it is far better to prioritize **small, quiet, and power-efficient hardware**, such as thin clients or mini PCs, over older enterprise servers. While retired enterprise equipment is often inexpensive on the used market, the initial savings can quickly disappear through higher electricity costs, increased cooling requirements, and constant fan noise. In many cases, small, quiet, and power-efficient hardware provide more than enough performance for learning virtualization, containers, networking, and other common home lab workloads while being far more practical for everyday use.
+
+There is also an important practical consideration that is easy to overlook: most of us share our homes with other people. Whether you live with a spouse, partner, children, roommates, or family members, they are unlikely to appreciate a loud server running 24 hours a day, generating heat, and occupying valuable space in a shared living area.
+
+Design your home lab so it blends naturally into your home rather than competing with it. A quiet, compact, and energy-efficient lab can run 24/7 without becoming a constant source of annoyance for you or the people you live with. By reducing the noise, heat, space requirements, and overall disruption your equipment creates, you reduce the friction that can come from introducing always-on technology into a shared living environment.
+
+The less your home lab impacts daily life, the more likely the people you live with are to support your hobby and the time you invest in learning. A home lab should enable your studies without becoming a burden on your household.
+
+A home lab should be something that integrates naturally into your home—not something that competes with it.
 
 ## Home Lab Hardware Priorities
 
@@ -59,7 +66,7 @@ These features become increasingly valuable as your home lab grows and hosts mor
 
 One recommendation that deserves special attention is the network interface controller (NIC).
 
-Whenever possible, purchase servers, mini PCs, or other systems that include **Intel Ethernet adapters** rather than **Realtek** adapters.
+Whenever possible, purchase thin clients, mini PCs, or other systems that include **Intel Ethernet adapters** rather than **Realtek** adapters.
 
 Many inexpensive systems ship with Realtek NICs because they reduce manufacturing costs. While they work adequately for basic desktop networking, they have historically caused compatibility and performance issues in certain Linux and virtualization environments.
 
@@ -107,6 +114,25 @@ Remember that a home lab is something you build over time. It is often better to
 ## Low-Cost Option
 
 If your goal is to learn either **Proxmox** *or* **Kubernetes**, but not both at the same time, this is an excellent place to start. A home lab at this price point is inexpensive to build, consumes very little power, and still provides enough resources to learn the fundamentals of virtualization, containers, networking, storage, backups, and high availability.
+
+### Router, Firewall, and Switch
+
+Your network is the foundation of your home lab, so this is one area where it is worth investing in quality hardware.
+
+At a minimum, your router or firewall should support **VLANs**. Ideally, it will also support Jumbo frames for your storage backplane. Network segmentation is one of the most valuable skills you can learn in a home lab, and many of the examples throughout this guide assume you have the ability to create and manage multiple VLANs.
+
+If you are following the hardware recommendations in this guide, you will need Ethernet connections for:
+
+* Your WAN connection (modem uplink)
+* Four compute cluster nodes
+* One storage server
+* One backup server
+
+This requires **seven Ethernet ports** in total. Your networking equipment should allow you to configure VLANs on the six LAN ports connected to your home lab devices. Depending on your router or firewall, you may need to add a **managed switch** to provide enough ports and VLAN support.
+
+I also recommend spending time researching different networking ecosystems, such as UniFi, MikroTik, or Ruckus, before making your first purchase. Whenever practical, standardize on a single vendor for your router, switches, and wireless access points. Using equipment from the same ecosystem often provides a more consistent management experience, simplifies configuration, and reduces troubleshooting as your home lab grows.
+
+If your current networking equipment does not support VLANs or other advanced networking features, **upgrading your router or firewall should be your highest hardware priority**. It is better to invest in a solid networking foundation and purchase slightly less powerful compute nodes than it is to have powerful servers connected to a limited network. A quality router or firewall can easily serve as the foundation for all three budget tiers in this guide, allowing you to upgrade your compute, storage, and backup hardware over time without replacing your networking infrastructure.
 
 ### Compute Cluster (4 Nodes)
 
