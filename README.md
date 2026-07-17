@@ -198,7 +198,7 @@ Due to fluctuating hardware markets, pricing shown reflects historical purchase 
 
 * Backup automation and snapshotting
 * Monitoring and logging stacks
-* Services such as Nextcloud, Home Assistant, and CI/CD tooling
+* Services such as Uptime Kuma and Grafana Alloy + Loki
 
 ---
 
