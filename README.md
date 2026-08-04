@@ -2,11 +2,11 @@
 
 An enterprise-inspired Home Lab developed through two major iterations.
 
-## Version 1 – LEGO Infrastructure Prototype (`v1-lego-infrastructure-prototype`)
+## Version 1 – LEGO Infrastructure Prototype
 
 A prototype focused on learning and implementing enterprise infrastructure concepts.
 
-## Version 2 – Automated Infrastructure Foundation (`v2-automated-infrastructure-foundation`)
+## Version 2 – Automated Infrastructure Foundation
 
 A redesigned infrastructure focused on platform engineering and building an Internal Developer Platform (IDP).
 
