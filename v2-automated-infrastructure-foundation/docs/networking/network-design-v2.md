@@ -17,7 +17,7 @@ This document outlines a redesigned **secure, high-performance VLAN and switchin
 
 ## Hardware Topology & Port Map
 
-<img width="1376" height="768" alt="image" src="https://github.com/user-attachments/assets/204b966c-90eb-42d0-b3ad-84a3e1bd29a9" />
+<img width="1377" height="768" alt="image" src="https://github.com/user-attachments/assets/50582918-c1db-4962-9750-38247bee1100" />
 
 ```text
 [ISP Modem] ──(1GbE RJ45 WAN)──> [1x Lenovo M90q Edge Host (Proxmox VE)]
